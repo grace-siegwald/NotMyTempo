@@ -17,3 +17,6 @@
 *.user
 *.userprefs
 .DS_Store
+.cache
+.unsaved
+.user
