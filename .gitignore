@@ -17,10 +17,11 @@
 *.user
 *.userprefs
 .DS_Store
-.cache
-.unsaved
-.user
-.unsaved
-.recycle
-.restore
-.fsbcache
+
+# FMOD Studio project user data and local caches
+.cache/
+.unsaved/
+.user/
+.restore/
+.fsbcache/
+.recycle/

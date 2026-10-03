@@ -1,5 +1,32 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8070851382934828880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/TEST
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/TEST
+  Guid:
+    Data1: -771775321
+    Data2: 1238415239
+    Data3: 1769702571
+    Data4: -401890821
+  Banks:
+  - {fileID: -1603754887342996006}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &-5762924259814521496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,10 +42,10 @@ MonoBehaviour:
   Path: ../NotQuiteMyTempoFMODProject/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639265330080676116
+  lastModified: 639266366952119649
   FileSizes:
   - Name: Desktop
-    Value: 770
+    Value: 766
   Exists: 1
 --- !u!114 &-3258303211654066130
 MonoBehaviour:
@@ -82,7 +109,7 @@ MonoBehaviour:
   Path: ../NotQuiteMyTempoFMODProject/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639265330080666108
+  lastModified: 639266366952104178
   FileSizes:
   - Name: Desktop
     Value: 9440
@@ -103,17 +130,19 @@ MonoBehaviour:
   - {fileID: -5762924259814521496}
   - {fileID: -1603754887342996006}
   EditorEvents:
-  - {fileID: 3427019390353467827}
+  - {fileID: -8070851382934828880}
   EditorParameters: []
   MasterBanks:
   - {fileID: -1603754887342996006}
   StringsBanks:
   - {fileID: -5762924259814521496}
   cacheVersion: 131858
-  cacheTime: 639265330080676116
+  cacheTime: 639266366952119649
   SerializableEventsDict:
   - key: event:/New Event
     index: 0
+  - key: event:/New Event 2
+    index: 1
 --- !u!114 &264533709369329837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,30 +163,3 @@ MonoBehaviour:
   - Name: Desktop
     Value: 770
   Exists: 1
---- !u!114 &3427019390353467827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
-  m_Name: event:/New Event
-  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
-  Path: event:/New Event
-  Guid:
-    Data1: -771775321
-    Data2: 1238415239
-    Data3: 1769702571
-    Data4: -401890821
-  Banks:
-  - {fileID: -1603754887342996006}
-  IsStream: 0
-  Is3D: 0
-  IsOneShot: 1
-  Parameters: []
-  MinDistance: 1
-  MaxDistance: 20
-  Length: 0

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{5e02d214-9c90-4395-b010-21ddcc9111b9}">
+		<property name="assetPath">
+			<value>Cartoon, Horn, Clown Horn, Honk, Goofy, Meme Redesign SND140183 13.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.5737291666666666</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1c86a496-45e8-4a7c-bdcd-5a6e724734d8}</destination>
+		</relationship>
+	</object>
+</objects>
