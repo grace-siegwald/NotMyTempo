@@ -1,0 +1,19 @@
+﻿<Solution>
+  <Project Path="Unity.ProBuilder.csproj" />
+  <Project Path="Unity.ProBuilder.Poly2Tri.csproj" />
+  <Project Path="Unity.ProBuilder.Csg.csproj" />
+  <Project Path="Unity.ProBuilder.Editor.csproj" />
+  <Project Path="FMODUnityResonanceEditor.csproj" />
+  <Project Path="FMODUnityEditor.csproj" />
+  <Project Path="FMODUnity.csproj" />
+  <Project Path="Unity.ProBuilder.KdTree.csproj" />
+  <Project Path="Unity.ProBuilder.AddOns.Editor.csproj" />
+  <Project Path="FMODUnityHaptics.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Unity.ProBuilder.Examples.csproj" />
+  <Project Path="Unity.ProBuilder.AssetIdRemapUtility.csproj" />
+  <Project Path="FMODUnityResonance.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Unity.ProBuilder.Examples.Editor.csproj" />
+  <Project Path="Unity.ProBuilder.Stl.csproj" />
+</Solution>
