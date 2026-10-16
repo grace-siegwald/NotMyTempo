@@ -6,14 +6,19 @@ public class PlayerInput : MonoBehaviour
 {
     // Actions
     [Header("Actions")]
-    [SerializeField] private InputActionReference _moveAction;
-    [SerializeField] private InputActionReference _lookAction;
+    [Tooltip("\"Player/Move\" from the InputSystem_Actions thing")]
+    [SerializeField] private InputActionReference _moveAction; // "Player/Move" from the InputSystem_Actions thing
+    [Tooltip("\"Player/Look\" from the InputSystem_Actions thing")]
+    [SerializeField] private InputActionReference _lookAction; // "Player/Look" from the InputSystem_Actions thing
 
     // Look
     [Header("Look")]
-    [SerializeField] private float _mouseSensitivity = 0.1f;
-    [SerializeField] private float _gamepadLookSpeed = 200f;
-    [SerializeField] private bool _isVerticalLookInverted;
+    [Tooltip("Degrees of rotation per pixel of mouse movement")]
+    [SerializeField] private float _mouseSensitivity = 0.1f; // degrees of rotation per pixel of mouse movement
+    [Tooltip("Degrees per second at the FULL right stick tilt position")]
+    [SerializeField] private float _gamepadLookSpeed = 200f; // degrees per second at the FULL right stick tilt position
+    [Tooltip("Invert vertial looking")]
+    [SerializeField] private bool _isVerticalLookInverted; // invert vertial looking
 
     // Properties
     // the movement input, x is strafing, y is forward. It's length is 0 to 1 

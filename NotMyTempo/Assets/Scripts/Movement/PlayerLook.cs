@@ -9,7 +9,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))] // got auto recomended for me, this makes sense tho! 
 public class PlayerLook : MonoBehaviour
 {
+    [Tooltip("The location of the camera on the player's body")]
     [SerializeField] private Transform _cameraRoot; // the location of the camera on the player's body 
+    [Tooltip("How far up and down you can look")]
     [SerializeField] private float _maxPitch = 89f; // how far up and down you can look
 
     private PlayerInput _inputReader;
