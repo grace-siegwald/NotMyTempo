@@ -1,8 +1,10 @@
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// Handles all the velocity stuff and moves the CharacterController (hence "motor"). Also manages running and gravity!
 /// The Player's pivot MUST be at its feet or else things break
+/// 
 /// Long story short, it does a bunch of velocity shit for different player states 
 /// </summary>
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))] // requires character controller and input reader
@@ -40,11 +42,15 @@ public class PlayerMotor : MonoBehaviour
     // Jump Stuff 
     [Header("Jump")]
     [Tooltip("The height of a jump, meters")]
-    [SerializeField] private float _jumpHeight = 2.5f; // just the height of a jump dummy
+    [SerializeField] private float _jumpHeight = 2.5f; // just the height of a jump 
     [Tooltip("Gravity multiplier while falling. Above 1 = snappy jumps and heavy landings.")]
     [SerializeField] private float _fallGravityMultiplier = 1.4f; // gravity gets "heavier" while falling, heavier landings
+    [Tooltip("Number of extra jumps allowed in air")]
+    [SerializeField] private int _airJumps = 1; // just one feels fine to me lol
+    [Tooltip("Time after leaving a ledge you can still jump, as if grounded / Higher = more forgiving")]
+    [SerializeField] private float _coyoteTime = 0.12f; // the higher the more forgiving 
 
-    // fields / components to get
+    // fields / getting components
     private CharacterController _controller;
     private PlayerInput _inputReader;
     private UnityEngine.Vector3 _velocity; // THE BIG HOMIE, THE MAN OF THE HOUR
@@ -52,7 +58,9 @@ public class PlayerMotor : MonoBehaviour
     private const float GroundProbeRadiusScale = 0.9f; // new stuff, not fully understood
     private const float MinimumSlopeMoveSqrMagnitude = 0.0001f; // new stuff, not fully understood
     private const float MinimumInputSqrMagnitude = 0.01f;
-    private float _lastGroundedTime = float.NegativeInfinity; 
+    private float _lastGroundedTime = float.NegativeInfinity;
+    private int _airJumpsUsed; // number of air jumps that have been used by the player
+    private bool _hasJumpedSinceGrounded; // has the player jumped since they've been on the ground? (needed bc coyoted time)
 
     // Properties (using the get accessors to recalculate every time it's "read" in Update)
     public Vector3 HorizontalVelocity { get { return new Vector3(_velocity.x, 0f, _velocity.z); } }
@@ -69,9 +77,10 @@ public class PlayerMotor : MonoBehaviour
         _controller = GetComponent<CharacterController>();
         _inputReader = GetComponent<PlayerInput>();
     }
-    private void Update()
+    private void Update() // BIG TIME MOVEMENT: check the world, change the velocity, and move!
     {
         float deltaTime = Time.deltaTime;
+        
         UpdateGrounded();
         WishDirection = CalculateWishDirection();
 
@@ -85,7 +94,6 @@ public class PlayerMotor : MonoBehaviour
             AccelerateInAir(deltaTime);
             ApplyGravity(deltaTime);
         }
-
         TryJump();
 
         MoveController(deltaTime); // FINALLY where the movement actually happens! 
@@ -93,15 +101,42 @@ public class PlayerMotor : MonoBehaviour
 
     private void TryJump()
     {
-        bool canJump = _inputReader.HasBufferedJump && IsGrounded;
-        if (!canJump) // if we can't jump, get outa here !
+        if (!_inputReader.HasBufferedJump || !CanJump(out bool isGroundJump)) // if we can't jump, get outa here!
         {
             return;
         }
         _inputReader.ConsumeJump();
 
+        if (!isGroundJump)
+        {
+            _airJumpsUsed++;
+            RedirectMomentumTowardInput();
+        }
+
+        _hasJumpedSinceGrounded = true; // need this set for coyote time
         IsGrounded = false;
         _velocity.y = Mathf.Sqrt(2f * _gravity * _jumpHeight); // I do NOT understand this maths bruv
+    }
+    
+    // utility method for deciding if we can jump or not
+    private bool CanJump(out bool isGroundJump) 
+    {
+        bool isInCoyoteTime = TimeSinceGrounded <= _coyoteTime && !_hasJumpedSinceGrounded;
+        isGroundJump = IsGrounded || isInCoyoteTime;
+        bool hasAirJumpLeft = _airJumpsUsed < _airJumps;
+
+        return isGroundJump || hasAirJumpLeft; // return true if we're on ground or we have an air jump still
+    }
+
+    // kinda like a destiny style double jump: horizontal momentum swings toward your input and keeps its speed.
+    private void RedirectMomentumTowardInput() // This is what lets a double jump turn a corner without losing speed FUN FUN FUN
+    {
+        if (!HasMoveInput) // if we don't have move input, get outa here !
+        {
+            return;
+        }
+        float speed = Mathf.Max(HorizontalSpeed, _airSpeed * WishDirection.magnitude); // speed takes whichever value is bigger
+        SetHorizontalVelocity(WishDirection.normalized * speed);
     }
 
     // Gets the direction the player wants to go, converts it to World Direction (input is local, need to convert it)
@@ -175,6 +210,8 @@ public class PlayerMotor : MonoBehaviour
     // finds the ground with a sphere cast
     private void UpdateGrounded()
     {
+        bool wasGrounded = IsGrounded;
+        
         float probeRadius = _controller.radius * GroundProbeRadiusScale;
         Vector3 probeOrigin = transform.position + _controller.center;
         float probeDistance = _controller.height * 0.5f - probeRadius + _controller.skinWidth + _groundProbeDistance;
@@ -197,6 +234,13 @@ public class PlayerMotor : MonoBehaviour
         if (IsGrounded)
         {
             _lastGroundedTime = Time.time;
+        }
+
+        bool hasJustLanded = IsGrounded && !wasGrounded;
+        if (hasJustLanded) // reset air jumps 
+        {
+            _airJumpsUsed = 0;
+            _hasJumpedSinceGrounded = false;
         }
     }
 
