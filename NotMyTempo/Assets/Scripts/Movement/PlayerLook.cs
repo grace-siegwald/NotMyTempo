@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Turns look input into rotation. Yaw (left/right) rotates the whole Player; pitch(up / down)
-// rotates only the CameraRoot, so the Player's forward always stays level.
-// Esc frees the cursor; clicking the Game view captures it again.
+/// <summary>
+/// Turns look input into rotation. Yaw (left/right) rotates the whole Player; pitch(up / down)
+/// rotates only the CameraRoot, so the Player's forward always stays level.
+/// Esc frees the cursor; clicking the Game view captures it again.
+/// </summary>
 
 [DefaultExecutionOrder(-50)] // execute this scripts Update after the player input is read :)
 [RequireComponent(typeof(PlayerInput))] // got auto recomended for me, this makes sense tho! 
@@ -17,6 +19,7 @@ public class PlayerLook : MonoBehaviour
     private PlayerInput _inputReader;
     private float _yaw;
     private float _pitch;
+    private bool _wasCursorLocked;
 
     private static void SetCursorLocked(bool isLocked) // For when we need to lock the cursor while looking, don't want thang swingin around !
     {
@@ -30,7 +33,7 @@ public class PlayerLook : MonoBehaviour
         }
         Cursor.visible = !isLocked; // cursor is visible when not locked :)
     }
-    private void Awake()
+    private void Awake() // runs as soon as the objects exists in the scene
     {
         _inputReader = GetComponent<PlayerInput>();
         _yaw = transform.eulerAngles.y;
@@ -44,6 +47,7 @@ public class PlayerLook : MonoBehaviour
     private void Update()
     {
         UpdateCursorLock();
+
 
         bool isCursorLocked = Cursor.lockState == CursorLockMode.Locked;
         

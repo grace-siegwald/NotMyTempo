@@ -1,6 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Reads the player's actions from the InputSystem_Actions asset gets their "values"
+/// for the other player movement scripts. Nothing else on the Player talks to the Input System directly.
+/// it all comes through here :)
+/// </summary>
+
 [DefaultExecutionOrder (-100)] // so that unity runs this scripts Update before anything else. INPUT NEEDS TO BE READ FIRST ON EVERY FRAME
 public class PlayerInput : MonoBehaviour
 {
