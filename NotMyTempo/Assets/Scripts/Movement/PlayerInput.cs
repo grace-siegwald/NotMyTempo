@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,6 +17,8 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private InputActionReference _moveAction; // "Player/Move" from the InputSystem_Actions thing
     [Tooltip("\"Player/Look\" from the InputSystem_Actions thing")]
     [SerializeField] private InputActionReference _lookAction; // "Player/Look" from the InputSystem_Actions thing
+    [Tooltip("\"Player/Jump\" from the InputSystem_Actions thing")]
+    [SerializeField] private InputActionReference _jumpAction; // "Player/Jump" from the InputSystem_Actions thing
 
     // Look
     [Header("Look")]
@@ -26,18 +29,31 @@ public class PlayerInput : MonoBehaviour
     [Tooltip("Invert vertial looking")]
     [SerializeField] private bool _isVerticalLookInverted; // invert vertial looking
 
+    // Input Buffering
+    [Header("Buffering")]
+    [Tooltip("Amount of time a button press is remembered, so a slightly early press still counts")]
+    [SerializeField] private float _bufferTime = 0.15f; // amount of time a button press is remembered, so a slightly early press still counts
+
+    private float _jumpPressedTime = float.NegativeInfinity; // float negitive infinity means "never pressed"
+
     // Properties
-    // the movement input, x is strafing, y is forward. It's length is 0 to 1 
-    public Vector2 MoveInput { get; private set; }
-    
+    public Vector2 MoveInput { get; private set; } // the movement input, x is strafing, y is forward. It's length is 0 to 1 
+
     // the degrees to rotate the look delta this frame. x = yaw (left and right), y = pitch (up and down)
     public Vector2 LookDelta { get; private set; }
+    public bool HasBufferedJump { get { return Time.time - _jumpPressedTime <= _bufferTime; } }
+
+    public void ConsumeJump()
+    {
+        _jumpPressedTime = float.NegativeInfinity; 
+    }
 
     private void OnEnable()
     {
         // we always make sure to manually enable the actions, just incase something has been fiddled with
         _moveAction.action.Enable();
         _lookAction.action.Enable();
+        _jumpAction.action.Enable();
     }
 
     private void Update()
@@ -47,6 +63,12 @@ public class PlayerInput : MonoBehaviour
         
         // gets the look input value
         LookDelta = ReadLookDelta();
+
+        // gets the jump input time pressed
+        if (_jumpAction.action.WasPressedThisFrame())
+        {
+            _jumpPressedTime = Time.time;
+        }
     }
 
     // gets the look delta from the input system and iterprets it as needed per input type (controller or mouse)
