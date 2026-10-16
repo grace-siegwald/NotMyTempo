@@ -181,6 +181,7 @@ GameObject:
   - component: {fileID: 101243503345177895}
   - component: {fileID: 191362783637291580}
   - component: {fileID: 3005699954359648659}
+  - component: {fileID: 1252778109520367336}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -225,7 +226,7 @@ CharacterController:
   m_Height: 1.8
   m_Radius: 0.4
   m_SlopeLimit: 50
-  m_StepOffset: 0.35
+  m_StepOffset: 0.4
   m_SkinWidth: 0.04
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.9, z: 0}
@@ -243,9 +244,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInput
   _moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  _jumpAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _mouseSensitivity: 0.1
   _gamepadLookSpeed: 200
   _isVerticalLookInverted: 0
+  _bufferTime: 0.15
 --- !u!114 &3005699954359648659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,3 +263,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
   _cameraRoot: {fileID: 4635959689124143622}
   _maxPitch: 89
+--- !u!114 &1252778109520367336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9204545892706032398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d83cea899059b3642b26b512db3674fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMotor
+  _stats: {fileID: 11400000, guid: 1b95f42220b427d4a8364f9982d6631b, type: 2}
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 55
+  _groundProbeDistance: 0.15
+  _groundStickyForce: 3

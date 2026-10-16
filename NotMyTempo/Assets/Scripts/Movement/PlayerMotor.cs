@@ -10,45 +10,20 @@ using static UnityEngine.UI.GridLayoutGroup;
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))] // requires character controller and input reader
 public class PlayerMotor : MonoBehaviour
 {
-    // Ground Stuff
-    [Header("Ground")] // all speeds are in m/s, all accelerations are in m/s^2
-    [Tooltip("Top speed ")]
-    [SerializeField] private float _groundSpeed = 10f; // top speed
-    [Tooltip("How quickly you get to top speed / Higher = snappier")]
-    [SerializeField] private float _groundAcceleration = 100f; // how quickly you get to top speed / Higher = snappier
-    [Tooltip("How quickly you stop")]
-    [SerializeField] private float _groundDeceleration = 80f; // how quickly you stop / Higher = stop quicker
-    [Tooltip("Small force on player to keep them pressed on ground")]
-    [SerializeField] private float _groundStickyForce = 3f; // small force on player to keep them pressed on ground
+    
+    [Tooltip("All movement tuning. Create one with Assets > Create > Not My Tempo > Movement Stats.")]
+    [SerializeField] private MovementStats _stats; // getting stat assest
 
-    // Air Stuff
-    [Header("Air")]
-    [Tooltip("Downward acceleration")]
-    [SerializeField] private float _gravity = 20f; // downward acceleration
-    [Tooltip("Cap for fall speed")]
-    [SerializeField] private float _maxFallSpeed = 50f; // cap for fall speed
-    [Tooltip("Top speed you can reach in the air through input")]
-    [SerializeField] private float _airSpeed = 12f; // higher than ground speed because FUN
-    [Tooltip("The strength of your air steering. Higher = sharper turns in the air")]
-    [SerializeField] private float _airAcceleration = 40f;
-
-    // Ground *Detection* Stuff
+    
+    // Ground Detection Stuff
     [Header("Ground Detection")]
     [Tooltip("Defines what the player can stand on")]
     [SerializeField] private LayerMask _groundMask = Physics.DefaultRaycastLayers; // defines what the player can stand on
     [Tooltip("How far below the feet we 'look' for the ground")]
     [SerializeField] private float _groundProbeDistance = 0.15f; // how far below the feet we "look" for the ground
+    [Tooltip("Small force on player to keep them pressed on ground")]
+    [SerializeField] private float _groundStickyForce = 3f; // small force on player to keep them pressed on ground
 
-    // Jump Stuff 
-    [Header("Jump")]
-    [Tooltip("The height of a jump, meters")]
-    [SerializeField] private float _jumpHeight = 2.5f; // just the height of a jump 
-    [Tooltip("Gravity multiplier while falling. Above 1 = snappy jumps and heavy landings.")]
-    [SerializeField] private float _fallGravityMultiplier = 1.4f; // gravity gets "heavier" while falling, heavier landings
-    [Tooltip("Number of extra jumps allowed in air")]
-    [SerializeField] private int _airJumps = 1; // just one feels fine to me lol
-    [Tooltip("Time after leaving a ledge you can still jump, as if grounded / Higher = more forgiving")]
-    [SerializeField] private float _coyoteTime = 0.12f; // the higher the more forgiving 
 
     // fields / getting components
     private CharacterController _controller;
@@ -76,6 +51,12 @@ public class PlayerMotor : MonoBehaviour
     {
         _controller = GetComponent<CharacterController>();
         _inputReader = GetComponent<PlayerInput>();
+
+        if (_stats == null)
+        {
+            Debug.Log("PlayerMotor script needs a MovementStats asset to be assigned", this);
+            enabled = false;
+        }
     }
     private void Update() // BIG TIME MOVEMENT: check the world, change the velocity, and move!
     {
@@ -115,15 +96,15 @@ public class PlayerMotor : MonoBehaviour
 
         _hasJumpedSinceGrounded = true; // need this set for coyote time
         IsGrounded = false;
-        _velocity.y = Mathf.Sqrt(2f * _gravity * _jumpHeight); // I do NOT understand this maths bruv
+        _velocity.y = Mathf.Sqrt(2f * _stats.Gravity * _stats.JumpHeight); // I do NOT understand this maths bruv
     }
     
     // utility method for deciding if we can jump or not
     private bool CanJump(out bool isGroundJump) 
     {
-        bool isInCoyoteTime = TimeSinceGrounded <= _coyoteTime && !_hasJumpedSinceGrounded;
+        bool isInCoyoteTime = TimeSinceGrounded <= _stats.CoyoteTime && !_hasJumpedSinceGrounded;
         isGroundJump = IsGrounded || isInCoyoteTime;
-        bool hasAirJumpLeft = _airJumpsUsed < _airJumps;
+        bool hasAirJumpLeft = _airJumpsUsed < _stats.AirJumps;
 
         return isGroundJump || hasAirJumpLeft; // return true if we're on ground or we have an air jump still
     }
@@ -135,7 +116,7 @@ public class PlayerMotor : MonoBehaviour
         {
             return;
         }
-        float speed = Mathf.Max(HorizontalSpeed, _airSpeed * WishDirection.magnitude); // speed takes whichever value is bigger
+        float speed = Mathf.Max(HorizontalSpeed, _stats.AirSpeed * WishDirection.magnitude); // speed takes whichever value is bigge
         SetHorizontalVelocity(WishDirection.normalized * speed);
     }
 
@@ -149,15 +130,15 @@ public class PlayerMotor : MonoBehaviour
     // calculates the accleration of the player while on the ground
     private void AccelerateOnGround(float deltaTime) // passing in same time we use in Update
     {
-        Vector3 targetVelocity = WishDirection * _groundSpeed; // velocity is almost always direction * speed, vector maths baby
+        Vector3 targetVelocity = WishDirection * _stats.GroundSpeed; // velocity is almost always direction * speed, vector maths baby
         float rate;
         if (HasMoveInput) // if we have player input, accelerate
         {
-            rate = _groundAcceleration;
+            rate = _stats.GroundAcceleration;
         }
         else // decelerate 
         {
-            rate = _groundDeceleration;
+            rate = _stats.GroundDeceleration;
         }
         // "Move Towards" brings the hori velocity to the target velocity at a constant pace
         Vector3 newVelocity = Vector3.MoveTowards(HorizontalVelocity, targetVelocity, rate * deltaTime);
@@ -174,15 +155,15 @@ public class PlayerMotor : MonoBehaviour
     // exactly as it sounds, utility for applying gravity to the player (with a max)
     private void ApplyGravity (float deltaTime)
     {
-        float gravity = _gravity;
+        float gravity = _stats.Gravity;
         bool isFalling = _velocity.y < 0f; // decide if falling or not 
 
         if (isFalling)
         {
-            gravity *= _fallGravityMultiplier; // multiply gravity by the gravity multiplier
+            gravity *= _stats.FallGravityMultiplier; // multiply gravity by the gravity multiplier
         }
 
-        _velocity.y = Mathf.Max(_velocity.y - _gravity * deltaTime, -_maxFallSpeed); // math.max to just give it a cap of the max fall speed
+        _velocity.y = Mathf.Max(_velocity.y - _stats.Gravity * deltaTime, -_stats.MaxFallSpeed); // math.max to just give it a cap of the max fall speed
     }
     
     // for movement in the air, player isn't a dead fish y'know
@@ -196,8 +177,8 @@ public class PlayerMotor : MonoBehaviour
         Vector3 horizontalVelocity = HorizontalVelocity;
         // speedCap takes whichever is bigger, your current speed (velocity magnitiude), or your current air speed
         // SO momentum you currently have is never taken away !
-        float speedCap = Mathf.Max(horizontalVelocity.magnitude, _airSpeed); 
-        Vector3 steeredVelocity = horizontalVelocity + WishDirection * (_airAcceleration * deltaTime);
+        float speedCap = Mathf.Max(horizontalVelocity.magnitude, _stats.AirSpeed); 
+        Vector3 steeredVelocity = horizontalVelocity + WishDirection * (_stats.AirAcceleration * deltaTime);
         SetHorizontalVelocity(Vector3.ClampMagnitude(steeredVelocity, speedCap));
     }
 
