@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
+using System;
 
 public class RaycastShootComplete : MonoBehaviour {
 
@@ -18,6 +19,11 @@ public class RaycastShootComplete : MonoBehaviour {
 
 
     [SerializeField] private InputActionReference fireAction; // Reference to the Input Action for firing
+    [SerializeField] private InputActionReference fireActionSecondary; // Reference to the Input Action for firing non-raycast projectiles
+
+    public float ProjectileForce = 1500f; // Force applied to the projectile when fired
+
+    [SerializeField] private GameObject projectilePrefab; // Reference to the projectile prefab
 
     void Start () 
     {
@@ -35,7 +41,7 @@ public class RaycastShootComplete : MonoBehaviour {
     void Update () 
     {
         // Check if the player has pressed the fire button and if enough time has elapsed since they last fired
-        if (fireAction.action.triggered && Time.time > nextFire) 
+        if (fireAction.action.triggered && Time.time > nextFire && !fireActionSecondary.action.triggered) 
         {
             // Update the time when our player can fire next
             nextFire = Time.time + fireRate;
@@ -81,8 +87,30 @@ public class RaycastShootComplete : MonoBehaviour {
                 laserLine.SetPosition (1, rayOrigin + (fpsCam.transform.forward * weaponRange));
             }
         }
+
+        if (fireActionSecondary.action.triggered && Time.time > nextFire && !fireAction.action.triggered)
+        {
+            ShootProjectile();
+        }
     }
 
+    private void ShootProjectile()
+    {
+        // Update the time when our player can fire next
+        nextFire = Time.time + fireRate;
+
+        // Instantiate the projectile prefab at the gun end position and rotation
+        GameObject projectile = Instantiate(projectilePrefab, gunEnd.position, gunEnd.rotation) as GameObject;
+
+        // Get the Rigidbody component of the projectile
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+
+        projectile.GetComponent<PlayerProjectile>().gunDamage = gunDamage; // Set the damage of the projectile
+        projectile.GetComponent<PlayerProjectile>().hitForce = hitForce; // Set the hit force of the projectile
+
+        // Apply a forward force to the projectile
+        rb.AddForce(gunEnd.forward * ProjectileForce); // Adjust the force value as needed
+    }
 
     private IEnumerator ShotEffect()
     {
