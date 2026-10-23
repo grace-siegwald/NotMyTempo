@@ -828086,6 +828086,23 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &974177593 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+  m_PrefabInstance: {fileID: 6689038250019879431}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &974177600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974177593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a78335a5e425be64ea4a40c59ac44622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Movement.Abilities.DashAbility
 --- !u!43 &1006619998
 Mesh:
   m_ObjectHideFlags: 0
@@ -832841,6 +832858,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 191362783637291580, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: _dashAction
+      value: 
+      objectReference: {fileID: 2123350996040546270, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -832885,10 +832906,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8228748598300930452, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 974177600}
   m_SourcePrefab: {fileID: 100100000, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

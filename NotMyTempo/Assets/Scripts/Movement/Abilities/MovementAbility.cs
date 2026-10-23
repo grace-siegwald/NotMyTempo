@@ -75,6 +75,6 @@ public abstract class MovementAbility : MonoBehaviour
     // ends the ability. motor defualt movement takes over this frame
     protected void Stop()
     {
-        Motor.StopAbility(this); // TODO
+        Motor.StopAbility(this); 
     }
 }

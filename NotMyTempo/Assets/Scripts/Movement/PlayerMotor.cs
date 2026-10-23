@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
 /// Handles all the velocity stuff and moves the CharacterController (hence "motor"). Also manages running and gravity!
@@ -30,21 +29,24 @@ public class PlayerMotor : MonoBehaviour
     private CharacterController _controller;
     private PlayerInput _inputReader;
     private readonly List<MovementAbility> _abilities = new List<MovementAbility>();
-    private UnityEngine.Vector3 _velocity; // THE BIG HOMIE, THE MAN OF THE HOUR
+    private Vector3 _velocity; // THE BIG HOMIE, THE MAN OF THE HOUR
     private const float RisingSpeedThreshold = 0.01f; // new stuff, not fully understood
     private const float GroundProbeRadiusScale = 0.9f; // new stuff, not fully understood
     private const float MinimumSlopeMoveSqrMagnitude = 0.0001f; // new stuff, not fully understood
     private const float MinimumInputSqrMagnitude = 0.01f;
     private float _lastGroundedTime = float.NegativeInfinity;
+    private float _landedTime = float.NegativeInfinity;
     private int _airJumpsUsed; // number of air jumps that have been used by the player
     private bool _hasJumpedSinceGrounded; // has the player jumped since they've been on the ground? (needed bc coyoted time)
+
 
     // Properties (using the get accessors to recalculate every time it's "read" in Update)
     public Vector3 HorizontalVelocity { get { return new Vector3(_velocity.x, 0f, _velocity.z); } }
     public float HorizontalSpeed { get { return HorizontalVelocity.magnitude; } }
     public bool IsGrounded { get; private set; } 
     public Vector3 GroundNormal { get; private set; } = Vector3.up; // the normal is the perpendicular vector pointing out from the plane
-    public float TimeSinceGrounded { get { return Time.time - _lastGroundedTime; } } // new stuff, not fully understood
+    public float TimeSinceGrounded { get { return Time.time - _lastGroundedTime; } } // tracks when the player was last grounded
+    public float TimeSinceLanded { get { return Time.time - _landedTime; } } // tracks when the player landed
     public Vector3 WishDirection { get; private set; } // BASICALLY Where the player is "asking" or "wishes" to go this frame, from 1 to 0 :)
     public bool HasMoveInput { get { return WishDirection.sqrMagnitude > MinimumInputSqrMagnitude; } }
     
@@ -66,7 +68,7 @@ public class PlayerMotor : MonoBehaviour
 
         if (_stats == null)
         {
-            Debug.Log("PlayerMotor script needs a MovementStats asset to be assigned", this);
+            Debug.LogError("PlayerMotor script needs a MovementStats asset to be assigned", this);
             enabled = false;
             return;
         }
@@ -81,6 +83,11 @@ public class PlayerMotor : MonoBehaviour
     private void Update() // BIG TIME MOVEMENT: check the world, change the velocity, and move!
     {
         float deltaTime = Time.deltaTime;
+        bool isPaused = deltaTime <= 0;
+        if (isPaused) // if we're paused we don't need to do any of this jazz
+        {
+            return;
+        }
         
         // CHECK THE WORLD
         UpdateGrounded();
@@ -91,7 +98,7 @@ public class PlayerMotor : MonoBehaviour
         {
             ability.UpdatePassive(deltaTime); // passive update is an always food
         }
-        ActivateAbility();  // TODO
+        TryActivateAbility();
         JumpOutOfAbility();
 
         if (ActiveAbility != null)
@@ -100,7 +107,7 @@ public class PlayerMotor : MonoBehaviour
         }
         else
         {
-            UpdateDefualtMovement(deltaTime); // defualt movement owns the velocity here
+            UpdateDefaultMovement(deltaTime); // defualt movement owns the velocity here
         }
 
         // MOVE
@@ -129,7 +136,7 @@ public class PlayerMotor : MonoBehaviour
             gravity *= _stats.FallGravityMultiplier; // multiply gravity by the gravity multiplier
         }
 
-        _velocity.y = Mathf.Max(_velocity.y - _stats.Gravity * deltaTime, -_stats.MaxFallSpeed); // math.max to just give it a cap of the max fall speed
+        _velocity.y = Mathf.Max(_velocity.y - gravity * deltaTime, -_stats.MaxFallSpeed); // math.max to just give it a cap of the max fall speed
     }
 
     // utility for applying ground force to vertical velocity
@@ -151,7 +158,7 @@ public class PlayerMotor : MonoBehaviour
     }
 
     // ground/air movement
-    private void UpdateDefualtMovement(float deltaTime)
+    private void UpdateDefaultMovement(float deltaTime)
     {
         if (IsGrounded)
         {
@@ -163,11 +170,11 @@ public class PlayerMotor : MonoBehaviour
             AccelerateInAir(deltaTime);
             ApplyGravity(deltaTime);
         }
-        Jump();
+        TryJump();
     }
     
     // DO THE THINGS
-    private void Jump()
+    private void TryJump()
     {
         if (!_inputReader.HasBufferedJump || !CanJump(out bool isGroundJump)) // if we can't jump, get outa here!
         {
@@ -187,7 +194,7 @@ public class PlayerMotor : MonoBehaviour
     }
     // looks for the best candidate that fits all the conditions (if ability isn't already running,
     // its component is enabled, it outranks whatever is active, it outranks best candidate found so far, AND it wants control!)
-    private void ActivateAbility()
+    private void TryActivateAbility()
     {
         MovementAbility bestAbility = null; // empty ability
         foreach (MovementAbility ability in _abilities)
@@ -256,9 +263,19 @@ public class PlayerMotor : MonoBehaviour
     // calculates the accleration of the player while on the ground
     private void AccelerateOnGround(float deltaTime) // passing in same time we use in Update
     {
-        Vector3 targetVelocity = WishDirection * _stats.GroundSpeed; // velocity is almost always direction * speed, vector maths baby
+        Vector3 horizontalVelocity = HorizontalVelocity;
+        float maxSpeed = _stats.GroundSpeed;
+        Vector3 targetVelocity = WishDirection * maxSpeed; // velocity is almost always direction * speed, vector maths baby
+        
         float rate;
-        if (HasMoveInput) // if we have player input, accelerate
+        bool isOverMaxSpeed = horizontalVelocity.magnitude > maxSpeed;
+        
+        // exactly one of the three branches run:
+        if (isOverMaxSpeed)
+        {
+            rate = CalculateOverspeedDeceleration(horizontalVelocity);
+        }
+        else if (HasMoveInput) // if we have player input, accelerate
         {
             rate = _stats.GroundAcceleration;
         }
@@ -269,6 +286,25 @@ public class PlayerMotor : MonoBehaviour
         // "Move Towards" brings the hori velocity to the target velocity at a constant pace
         Vector3 newVelocity = Vector3.MoveTowards(HorizontalVelocity, targetVelocity, rate * deltaTime);
         SetHorizontalVelocity(newVelocity);
+    }
+
+    // how fast you "bleed" extra speed on the ground. You loose nothing during the landing grace period.
+    // you blead speed slowly if you're pushing forward, and quickly of you break (input oposite direction)
+    private float CalculateOverspeedDeceleration(Vector3 horizontalVelocity)
+    {
+        bool isInLandingGrace = TimeSinceLanded <= _stats.LandingGraceTime;
+        if (isInLandingGrace)
+        {
+            return 0f;
+        }
+
+        bool isPushingAgainstMomentum = Vector3.Dot(WishDirection, horizontalVelocity) < 0f;
+        bool isBreaking = !HasMoveInput || isPushingAgainstMomentum;
+        if (isBreaking)
+        {
+            return _stats.GroundDeceleration;
+        }
+        return _stats.OverspeedDeceleration;
     }
 
     // for movement in the air, player isn't a dead fish y'know
@@ -321,6 +357,7 @@ public class PlayerMotor : MonoBehaviour
         {
             _airJumpsUsed = 0;
             _hasJumpedSinceGrounded = false;
+            _landedTime = Time.time;
         }
     }
 
@@ -328,6 +365,7 @@ public class PlayerMotor : MonoBehaviour
     {
         Vector3 horizontalVelocity = HorizontalVelocity;
         Vector3 displacement;
+        Vector3 positionBeforeMove = transform.position;
 
         bool isFollowingGround = IsGrounded && _velocity.y <= 0f;
         if (isFollowingGround)
@@ -351,6 +389,23 @@ public class PlayerMotor : MonoBehaviour
         if (hitCeiling && _velocity.y > 0f)
         {
             _velocity.y = 0f;
+        }
+        bool hitWall = (collisionFlags & CollisionFlags.Sides) != 0;
+        if (hitWall)
+        {
+            KeepOnlyVelocityThatHappened(positionBeforeMove, deltaTime);
+        }
+    }
+    // After running into a wall, replaces the horizontal velocity with how far we actually moved.
+    // Speed pushed into the wall is lost; speed sliding along it is kept.
+    private void KeepOnlyVelocityThatHappened(Vector3 positionBeforeMove, float deltaTime)
+    {
+        Vector3 actualVelocity = (transform.position - positionBeforeMove) / deltaTime;
+        Vector3 actualHorizontalVelocity = new Vector3(actualVelocity.x, 0f, actualVelocity.z);
+        bool hasLostSpeed = actualHorizontalVelocity.sqrMagnitude < HorizontalVelocity.sqrMagnitude;
+        if (hasLostSpeed)
+        {
+            SetHorizontalVelocity(actualHorizontalVelocity);
         }
     }
 }
