@@ -7,6 +7,5 @@
   <Project Path="Unity.ProBuilder.Examples.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="FMODUnityResonance.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Unity.ProBuilder.Examples.Editor.csproj" />
 </Solution>
