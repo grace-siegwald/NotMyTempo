@@ -18,6 +18,8 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private InputActionReference _lookAction; // "Player/Look" from the InputSystem_Actions thing
     [Tooltip("\"Player/Jump\" from the InputSystem_Actions thing")]
     [SerializeField] private InputActionReference _jumpAction; // "Player/Jump" from the InputSystem_Actions thing
+    [Tooltip("Player/Dash from the InputSystem_Actions thing")]
+    [SerializeField] private InputActionReference _dashAction; 
 
     // Look
     [Header("Look")]
@@ -33,18 +35,25 @@ public class PlayerInput : MonoBehaviour
     [Tooltip("Amount of time a button press is remembered, so a slightly early press still counts")]
     [SerializeField] private float _bufferTime = 0.15f; // amount of time a button press is remembered, so a slightly early press still counts
 
+    // these store the time the button was pressed (for input buffering purposes)
     private float _jumpPressedTime = float.NegativeInfinity; // float negitive infinity means "never pressed"
+    private float _dashPressedTime = float.NegativeInfinity; 
 
     // Properties
     public Vector2 MoveInput { get; private set; } // the movement input, x is strafing, y is forward. It's length is 0 to 1 
 
     // the degrees to rotate the look delta this frame. x = yaw (left and right), y = pitch (up and down)
     public Vector2 LookDelta { get; private set; }
-    public bool HasBufferedJump { get { return Time.time - _jumpPressedTime <= _bufferTime; } }
+    public bool HasBufferedJump { get { return IsWithinBuffer(_jumpPressedTime); } }
+    public bool HasBufferedDash { get { return IsWithinBuffer(_dashPressedTime); }  }
 
     public void ConsumeJump()
     {
         _jumpPressedTime = float.NegativeInfinity; 
+    }
+    public void ConsumeDash()
+    {
+        _dashPressedTime = float.NegativeInfinity;
     }
 
     private void OnEnable()
@@ -53,6 +62,7 @@ public class PlayerInput : MonoBehaviour
         _moveAction.action.Enable();
         _lookAction.action.Enable();
         _jumpAction.action.Enable();
+        _dashAction.action.Enable();
     }
 
     private void Update()
@@ -68,6 +78,18 @@ public class PlayerInput : MonoBehaviour
         {
             _jumpPressedTime = Time.time;
         }
+
+        // get the dash input time pressed
+        if (_dashAction.action.WasPressedThisFrame())
+        {
+            _dashPressedTime = Time.time;
+        }
+    }
+
+    // utility for checking if an action is within the buffer period
+    private bool IsWithinBuffer(float pressedTime)
+    {
+        return Time.time - pressedTime <= _bufferTime;
     }
 
     // gets the look delta from the input system and iterprets it as needed per input type (controller or mouse)
