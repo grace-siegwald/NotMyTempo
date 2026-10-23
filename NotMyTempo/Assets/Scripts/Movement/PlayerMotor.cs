@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using static UnityEngine.UI.GridLayoutGroup;
 
 /// <summary>
@@ -28,6 +29,7 @@ public class PlayerMotor : MonoBehaviour
     // fields / getting components
     private CharacterController _controller;
     private PlayerInput _inputReader;
+    private readonly List<MovementAbility> _abilities = new List<MovementAbility>();
     private UnityEngine.Vector3 _velocity; // THE BIG HOMIE, THE MAN OF THE HOUR
     private const float RisingSpeedThreshold = 0.01f; // new stuff, not fully understood
     private const float GroundProbeRadiusScale = 0.9f; // new stuff, not fully understood
@@ -43,9 +45,19 @@ public class PlayerMotor : MonoBehaviour
     public bool IsGrounded { get; private set; } 
     public Vector3 GroundNormal { get; private set; } = Vector3.up; // the normal is the perpendicular vector pointing out from the plane
     public float TimeSinceGrounded { get { return Time.time - _lastGroundedTime; } } // new stuff, not fully understood
-
     public Vector3 WishDirection { get; private set; } // BASICALLY Where the player is "asking" or "wishes" to go this frame, from 1 to 0 :)
     public bool HasMoveInput { get { return WishDirection.sqrMagnitude > MinimumInputSqrMagnitude; } }
+    
+    // for the abilites to see:
+    public PlayerInput InputReader { get { return _inputReader; } }
+    public MovementStats Stats { get { return _stats; } }
+    // reference to the active ability: the ability currently in control of the velocity (null if doing defualt movement)
+    public MovementAbility ActiveAbility { get; private set; }
+    public Vector3 Velocity
+    {
+        get { return _velocity; }
+        set { _velocity = value; }
+    }
 
     private void Awake() // runs as soon as the objects exists in the scene
     {
@@ -56,15 +68,91 @@ public class PlayerMotor : MonoBehaviour
         {
             Debug.Log("PlayerMotor script needs a MovementStats asset to be assigned", this);
             enabled = false;
+            return;
+        }
+
+        // setup the abilities on the player, gets all the children of the base class MovementAbility
+        foreach (MovementAbility ability in GetComponents<MovementAbility>())
+        {
+            ability.Bind(this);
+            _abilities.Add(ability);
         }
     }
     private void Update() // BIG TIME MOVEMENT: check the world, change the velocity, and move!
     {
         float deltaTime = Time.deltaTime;
         
+        // CHECK THE WORLD
         UpdateGrounded();
         WishDirection = CalculateWishDirection();
 
+        // CHANGE  THE VELOCITY (two possible owners, defualt or ability)
+        foreach (MovementAbility ability in _abilities)
+        {
+            ability.UpdatePassive(deltaTime); // passive update is an always food
+        }
+        ActivateAbility();  // TODO
+        JumpOutOfAbility();
+
+        if (ActiveAbility != null)
+        {
+            ActiveAbility.UpdateActive(deltaTime); // ability owns the velocity here
+        }
+        else
+        {
+            UpdateDefualtMovement(deltaTime); // defualt movement owns the velocity here
+        }
+
+        // MOVE
+        bool shouldMoveController = ActiveAbility == null || !ActiveAbility.MovesTransformDirectly;
+        if (shouldMoveController)
+        {
+            MoveController(deltaTime); // FINALLY where the movement actually happens!
+        } 
+    }
+    
+    // utility for setting hori velocity
+    public void SetHorizontalVelocity(Vector3 horizontalVelocity)
+    {
+        _velocity.x = horizontalVelocity.x;
+        _velocity.z = horizontalVelocity.z;
+    }
+
+    // exactly as it sounds, utility for applying gravity to the player (with a max)
+    public void ApplyGravity(float deltaTime)
+    {
+        float gravity = _stats.Gravity;
+        bool isFalling = _velocity.y < 0f; // decide if falling or not 
+
+        if (isFalling)
+        {
+            gravity *= _stats.FallGravityMultiplier; // multiply gravity by the gravity multiplier
+        }
+
+        _velocity.y = Mathf.Max(_velocity.y - _stats.Gravity * deltaTime, -_stats.MaxFallSpeed); // math.max to just give it a cap of the max fall speed
+    }
+
+    // utility for applying ground force to vertical velocity
+    public void StickToGround()
+    {
+        _velocity.y = -_groundStickyForce;
+    }
+    
+    // utility for ending the active ability
+    public void StopAbility(MovementAbility ability)
+    {
+        bool isActiveAbility = ActiveAbility == ability;
+        if (!isActiveAbility) // we do not need to stop abilities that are not active!
+        {
+            return; 
+        }
+        ActiveAbility = null;
+        ability.Deactivate();
+    }
+
+    // ground/air movement
+    private void UpdateDefualtMovement(float deltaTime)
+    {
         if (IsGrounded)
         {
             AccelerateOnGround(deltaTime);
@@ -75,12 +163,11 @@ public class PlayerMotor : MonoBehaviour
             AccelerateInAir(deltaTime);
             ApplyGravity(deltaTime);
         }
-        TryJump();
-
-        MoveController(deltaTime); // FINALLY where the movement actually happens! 
+        Jump();
     }
-
-    private void TryJump()
+    
+    // DO THE THINGS
+    private void Jump()
     {
         if (!_inputReader.HasBufferedJump || !CanJump(out bool isGroundJump)) // if we can't jump, get outa here!
         {
@@ -97,6 +184,45 @@ public class PlayerMotor : MonoBehaviour
         _hasJumpedSinceGrounded = true; // need this set for coyote time
         IsGrounded = false;
         _velocity.y = Mathf.Sqrt(2f * _stats.Gravity * _stats.JumpHeight); // I do NOT understand this maths bruv
+    }
+    // looks for the best candidate that fits all the conditions (if ability isn't already running,
+    // its component is enabled, it outranks whatever is active, it outranks best candidate found so far, AND it wants control!)
+    private void ActivateAbility()
+    {
+        MovementAbility bestAbility = null; // empty ability
+        foreach (MovementAbility ability in _abilities)
+        {
+            bool isAvailable = !ability.IsActive && ability.isActiveAndEnabled; // check if avaiable...
+            bool outranksActive = ActiveAbility == null || ability.Priority > ActiveAbility.Priority; // ...and if it's higher priority...
+            bool outranksBest = bestAbility == null || ability.Priority > bestAbility.Priority; // ...and the best candiate
+            if (isAvailable && outranksActive && outranksBest && ability.WantsToActivate()) // if all of this is true, assign the ability
+            {
+                bestAbility = ability;
+            }
+        }
+
+        if (bestAbility == null)
+        {
+            return;
+        }
+        if (ActiveAbility != null)
+        {
+            StopAbility(ActiveAbility);
+        }
+        ActiveAbility = bestAbility;
+        bestAbility.Activate();
+    }
+    // jumping out of an ability, and the jump keeps the momentum (the jump happens in defualt movement right after)
+    private void JumpOutOfAbility() // the motor stops the ability but doesn't touch the velocity!
+    {
+        // we can jump out of an ability if its the active ability, if it's a jump cancleable ability, and if we *have a jump* at the moment
+        bool canJumpOut = ActiveAbility != null && ActiveAbility.CanJumpCancel && _inputReader.HasBufferedJump && CanJump(out _);
+        if (!canJumpOut) // if we can't jump out of ability, get outa here!
+        {
+            return;
+        }
+        ActiveAbility.OnJumpCancel(); // what happens on jump cancel
+        StopAbility(ActiveAbility); // stop da ability
     }
     
     // utility method for deciding if we can jump or not
@@ -144,28 +270,7 @@ public class PlayerMotor : MonoBehaviour
         Vector3 newVelocity = Vector3.MoveTowards(HorizontalVelocity, targetVelocity, rate * deltaTime);
         SetHorizontalVelocity(newVelocity);
     }
-    
-    // utility for setting hori velocity
-    private void SetHorizontalVelocity(Vector3 horizontalVelocity)
-    {
-        _velocity.x = horizontalVelocity.x;
-        _velocity.z = horizontalVelocity.z;
-    }
-    
-    // exactly as it sounds, utility for applying gravity to the player (with a max)
-    private void ApplyGravity (float deltaTime)
-    {
-        float gravity = _stats.Gravity;
-        bool isFalling = _velocity.y < 0f; // decide if falling or not 
 
-        if (isFalling)
-        {
-            gravity *= _stats.FallGravityMultiplier; // multiply gravity by the gravity multiplier
-        }
-
-        _velocity.y = Mathf.Max(_velocity.y - _stats.Gravity * deltaTime, -_stats.MaxFallSpeed); // math.max to just give it a cap of the max fall speed
-    }
-    
     // for movement in the air, player isn't a dead fish y'know
     private void AccelerateInAir(float deltaTime)
     {
@@ -180,12 +285,6 @@ public class PlayerMotor : MonoBehaviour
         float speedCap = Mathf.Max(horizontalVelocity.magnitude, _stats.AirSpeed); 
         Vector3 steeredVelocity = horizontalVelocity + WishDirection * (_stats.AirAcceleration * deltaTime);
         SetHorizontalVelocity(Vector3.ClampMagnitude(steeredVelocity, speedCap));
-    }
-
-    // utility for applying ground force to vertical velocity
-    private void StickToGround()
-    {
-        _velocity.y = -_groundStickyForce;
     }
     
     // finds the ground with a sphere cast
