@@ -25,6 +25,7 @@ public class EnemyAi : MonoBehaviour
 
         // Spread path updates across different frames.
         nextUpdate = Time.time + UnityEngine.Random.Range(0f, 0.25f);
+        FindFirstObjectByType<PlayerHealth>();
     }
 
     void Update()
