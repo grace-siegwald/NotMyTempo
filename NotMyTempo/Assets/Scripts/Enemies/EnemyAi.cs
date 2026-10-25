@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAi : MonoBehaviour
+public class EnemyAi : MonoBehaviour, IDamageable
 {
     public PlayerHealth player;
     public float health = 50f;
@@ -25,7 +25,7 @@ public class EnemyAi : MonoBehaviour
 
         // Spread path updates across different frames.
         nextUpdate = Time.time + UnityEngine.Random.Range(0f, 0.25f);
-        FindFirstObjectByType<PlayerHealth>();
+        if (player == null) { player = FindFirstObjectByType<PlayerHealth>(); }
     }
 
     void Update()
