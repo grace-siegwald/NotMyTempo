@@ -5,7 +5,9 @@ public class PlayerProjectile : MonoBehaviour
     public int gunDamage; // Damage dealt by the projectile
     public float hitForce; // Force applied to the object hit by the projectile
 
-    [SerializeField] private Collider collider; // Reference to the collider of the projectile
+    [Header("Fields")]
+    [Tooltip("Reference to the collider of the projectile")]
+    [SerializeField] private new Collider collider; // Reference to the collider of the projectile
 
     void Awake()
     {

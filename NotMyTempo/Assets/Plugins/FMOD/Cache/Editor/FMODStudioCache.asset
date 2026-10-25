@@ -42,7 +42,7 @@ MonoBehaviour:
   Path: ../NotQuiteMyTempoFMODProject/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639284607995674830
+  lastModified: 639285449009551701
   FileSizes:
   - Name: Desktop
     Value: 766
@@ -109,7 +109,7 @@ MonoBehaviour:
   Path: ../NotQuiteMyTempoFMODProject/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639284607995654810
+  lastModified: 639285449009501586
   FileSizes:
   - Name: Desktop
     Value: 9440
@@ -137,7 +137,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: -5762924259814521496}
   cacheVersion: 131858
-  cacheTime: 639284607995674830
+  cacheTime: 639285449009551701
   SerializableEventsDict:
   - key: event:/TEST
     index: 0
