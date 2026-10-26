@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,6 +24,19 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Never more than this many enemies alive at once")]
     [SerializeField] private int maxAlive = 8;
 
+    [Header("Ramp up")]
+    [Tooltip("Seconds per difficulty stage")]
+    [SerializeField] private float rampEvery = 32f;
+    [Tooltip("Each stage multiplies the spawn interval by this. 0.85 = 15% faster")]
+    [Range(0.5f, 1f)]
+    [SerializeField] private float intervalMultiplier = 0.85f;
+    [Tooltip("Spawning never gets faster than this, in seconds")]
+    [SerializeField] private float minSpawnInterval = 0.6f;
+    [Tooltip("Each stage allows this many more enemies alive at once")]
+    [SerializeField] private int maxAliveIncrease = 2;
+    [Tooltip("Hard cap on enemies alive, however long the run lasts")]
+    [SerializeField] private int maxAliveCap = 25;
+
     [Header("Placement")]
     [Tooltip("Skip spawn points closer than this to the player, in meters")]
     [SerializeField] private float minDistanceFromPlayer = 10f;
@@ -34,8 +48,12 @@ public class EnemySpawner : MonoBehaviour
     private PlayerHealth player;
     private Transform enemyContainer;
     private float nextSpawnTime;
+    private float startTime;
 
     public int AliveCount => alive.Count; // the HUD can read this later
+    public int Stage {  get; private set; } // the threshold that's crossed to incease difficulty
+    public float CurrentSpawnInterval => Mathf.Max(minSpawnInterval, spawnInterval * Mathf.Pow(intervalMultiplier, Stage));
+    public int CurrentMaxAlive => Mathf.Min(maxAliveCap, maxAlive + Stage * maxAliveIncrease);
 
     private void Start()
     {
@@ -49,6 +67,7 @@ public class EnemySpawner : MonoBehaviour
         player = FindFirstObjectByType<PlayerHealth>();
         enemyContainer = new GameObject("Spawned Enemies").transform;
         nextSpawnTime = Time.time + startDelay;
+        startTime = Time.time; // sets start time
     }
 
     private void Update()
@@ -56,13 +75,15 @@ public class EnemySpawner : MonoBehaviour
         if (player == null || player.IsDead) // if we're dead, don't spawn things
             return;
 
+        UpdateStage();
+        
         // A destroyed enemy counts as "null" in Unity, so this clears out the dead ones
         alive.RemoveAll(enemy => enemy == null);
 
         if (Time.time < nextSpawnTime || alive.Count >= maxAlive)
             return;
 
-        nextSpawnTime = Time.time + spawnInterval; // iterate the spawn time
+        nextSpawnTime = Time.time + CurrentSpawnInterval; // iterate the spawn time
         TrySpawn(); // try to spawn
     }
 
@@ -86,6 +107,16 @@ public class EnemySpawner : MonoBehaviour
         EnemyAi enemy = Instantiate(enemyPrefab, hit.position, facing, enemyContainer);
         enemy.player = player;
         alive.Add(enemy);
+    }
+    private void UpdateStage()
+    {
+        int stage = Mathf.FloorToInt((Time.time - startTime) / Mathf.Max(1f, rampEvery));
+        if (stage == Stage)
+            return;
+
+        Stage = stage;
+        Debug.Log("Spawner stage " + Stage + ": one enemy every " +
+                  CurrentSpawnInterval.ToString("0.00") + "s, up to " + CurrentMaxAlive + " alive");
     }
 
     private Transform PickSpawnPoint()

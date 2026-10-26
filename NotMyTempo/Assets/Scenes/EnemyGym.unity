@@ -21545,9 +21545,14 @@ MonoBehaviour:
   - {fileID: 639293892}
   - {fileID: 1861369938}
   - {fileID: 2071823970}
-  startDelay: 2
+  startDelay: 32
   spawnInterval: 2.5
   maxAlive: 8
+  rampEvery: 5
+  intervalMultiplier: 0.85
+  minSpawnInterval: 0.6
+  maxAliveIncrease: 2
+  maxAliveCap: 25
   minDistanceFromPlayer: 10
   navMeshSearchRadius: 3
 --- !u!1 &1729340932
@@ -25610,6 +25615,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
       value: 57.28
