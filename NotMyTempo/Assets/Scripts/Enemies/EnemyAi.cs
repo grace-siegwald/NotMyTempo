@@ -17,10 +17,12 @@ public class EnemyAi : MonoBehaviour, IDamageable
     private NavMeshAgent agent;
     private float nextAttack;
     private float nextUpdate;
+    private HitFlash hitFlash;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        hitFlash = GetComponent<HitFlash>();
         agent.stoppingDistance = attackRange * 0.8f;
 
         // Spread path updates across different frames.
@@ -80,10 +82,14 @@ public class EnemyAi : MonoBehaviour, IDamageable
 
         health -= amount;
 
+        if (hitFlash != null) // does the hitflash thing
+            hitFlash.Flash();
+
         if (health <= 0f)
         {
             agent.enabled = false;
-            Destroy(gameObject);
+            GetComponent<Collider>().enabled = false; // dead enemies stop blocking shots
+            Destroy(gameObject, 0.08f); // short delay so the killing shot flashes too
         }
     }
 }

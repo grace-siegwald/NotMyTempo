@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7275981273630463334}
   - component: {fileID: 7958024151426300508}
   - component: {fileID: 5493123133932997350}
+  - component: {fileID: -4601625887893071805}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -158,3 +159,17 @@ MonoBehaviour:
   walls:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &-4601625887893071805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503520202747334103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973e57d85842d1e4b8bb07b2ac7dea14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlash
+  flashMaterial: {fileID: 2100000, guid: f1c39d6ad76fc8a4a987309912b37749, type: 2}
+  flashDuration: 0.08
