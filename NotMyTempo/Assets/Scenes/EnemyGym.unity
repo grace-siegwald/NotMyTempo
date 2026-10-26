@@ -486,7 +486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 39569993}
   m_Layer: 0
-  m_Name: Spawner (4)
+  m_Name: SpawnPoint_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2478,7 +2478,7 @@ GameObject:
   m_Component:
   - component: {fileID: 225026462}
   m_Layer: 0
-  m_Name: Spawner
+  m_Name: SpawnPoint_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5718,7 +5718,7 @@ GameObject:
   m_Component:
   - component: {fileID: 638926029}
   m_Layer: 0
-  m_Name: Spawner (3)
+  m_Name: SpawnPoint_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5749,7 +5749,7 @@ GameObject:
   m_Component:
   - component: {fileID: 639293892}
   m_Layer: 0
-  m_Name: Spawner (2)
+  m_Name: SpawnPoint_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5780,7 +5780,7 @@ GameObject:
   m_Component:
   - component: {fileID: 644046131}
   m_Layer: 0
-  m_Name: Spawner (1)
+  m_Name: SpawnPoint_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5979,67 +5979,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1001 &684005180
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 503520202747334103, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_Name
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 28.47
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 4.04
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -33.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481721208923911693, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5493123133932997350, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1258535984}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
 --- !u!43 &692497686
 Mesh:
   m_ObjectHideFlags: 0
@@ -16792,17 +16731,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1292821391}
   m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
---- !u!114 &1258535984 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5898614285976194355, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-  m_PrefabInstance: {fileID: 2116062908}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e36f43663f7eff48b5f984e64d1f6fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
 --- !u!43 &1277428919
 Mesh:
   m_ObjectHideFlags: 0
@@ -21568,8 +21496,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1644548785}
+  - component: {fileID: 1644548786}
   m_Layer: 0
-  m_Name: Spawners
+  m_Name: Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21597,6 +21526,30 @@ Transform:
   - {fileID: 39569993}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1644548786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644548784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06b2c06c47397f847a81ca38e078fafa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  enemyPrefab: {fileID: 5493123133932997350, guid: 5e99ee34bb732714e89cb06753cf1fa9, type: 3}
+  spawnPoints:
+  - {fileID: 225026462}
+  - {fileID: 644046131}
+  - {fileID: 639293892}
+  - {fileID: 1861369938}
+  - {fileID: 2071823970}
+  startDelay: 2
+  spawnInterval: 2.5
+  maxAlive: 8
+  minDistanceFromPlayer: 10
+  navMeshSearchRadius: 3
 --- !u!1 &1729340932
 GameObject:
   m_ObjectHideFlags: 0
@@ -22625,7 +22578,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1861369938}
   m_Layer: 0
-  m_Name: Spawner (5)
+  m_Name: SpawnPoint_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25093,7 +25046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2071823970}
   m_Layer: 0
-  m_Name: Spawner (6)
+  m_Name: SpawnPoint_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25718,4 +25671,3 @@ SceneRoots:
   - {fileID: 2116062908}
   - {fileID: 1292821391}
   - {fileID: 1644548785}
-  - {fileID: 684005180}
