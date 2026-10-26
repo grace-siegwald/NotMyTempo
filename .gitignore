@@ -32,3 +32,6 @@
 **/[Aa]ssets/StreamingAssets/**/*.bank
 **/[Aa]ssets/StreamingAssets/**/*.bank.meta
 fmod_editor.log
+
+# ProBuilder saves editor state here (e.g. last selection mode) on every Play
+**/ProjectSettings/Packages/com.unity.probuilder/Settings.json
