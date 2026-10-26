@@ -3,13 +3,16 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using System;
 
-public class RaycastShootComplete : MonoBehaviour {
+public class RaycastShoot : MonoBehaviour 
+{
 
     public int gunDamage = 1;                                            // Set the number of hitpoints that this gun will take away from shot objects with a health script
     public float fireRate = 0.25f;                                        // Number in seconds which controls how often the player can fire
     public float weaponRange = 50f;                                        // Distance in Unity units over which the player can fire
     public float hitForce = 100f;                                        // Amount of force which will be added to objects with a rigidbody shot by the player
     public Transform gunEnd;                                            // Holds a reference to the gun end object, marking the muzzle location of the gun
+    [Tooltip("Layers the gun can hit. Untick Player so you can't shoot yourself.")]
+    public LayerMask shootableLayers = ~0; // ~0 means "Everything"
 
     private Camera fpsCam;                                                // Holds a reference to the first person camera
     private WaitForSeconds shotDuration = new WaitForSeconds(0.07f);    // WaitForSeconds object used by our ShotEffect coroutine, determines time laser line will remain visible
@@ -59,19 +62,19 @@ public class RaycastShootComplete : MonoBehaviour {
             laserLine.SetPosition (0, gunEnd.position);
 
             // Check if our raycast has hit anything
-            if (Physics.Raycast (rayOrigin, fpsCam.transform.forward, out hit, weaponRange))
+            if (Physics.Raycast(rayOrigin, fpsCam.transform.forward, out hit, weaponRange,
+                    shootableLayers, QueryTriggerInteraction.Ignore)) // Ignores trigger colliders
             {
                 // Set the end position for our laser line 
                 laserLine.SetPosition (1, hit.point);
 
-                // Get a reference to a health script attached to the collider we hit
-                ShootableBox health = hit.collider.GetComponent<ShootableBox>();
+                // Ask the thing we hit (or its parents) whether it can take damage
+                IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
 
-                // If there was a health script attached
-                if (health != null)
+                // If it can, hurt it
+                if (target != null)
                 {
-                    // Call the damage function of that script, passing in our gunDamage variable
-                    health.Damage (gunDamage);
+                    target.TakeDamage(gunDamage);
                 }
 
                 // Check if the object we hit has a rigidbody attached
@@ -105,8 +108,8 @@ public class RaycastShootComplete : MonoBehaviour {
         // Get the Rigidbody component of the projectile
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
-        projectile.GetComponent<PlayerProjectile>().gunDamage = gunDamage; // Set the damage of the projectile
-        projectile.GetComponent<PlayerProjectile>().hitForce = hitForce; // Set the hit force of the projectile
+        projectile.GetComponent<ProjectileShoot>().gunDamage = gunDamage; // Set the damage of the projectile
+        projectile.GetComponent<ProjectileShoot>().hitForce = hitForce; // Set the hit force of the projectile
 
         // Apply a forward force to the projectile
         rb.AddForce(gunEnd.forward * ProjectileForce); // Adjust the force value as needed

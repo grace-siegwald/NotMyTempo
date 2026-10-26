@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 101526223762448661}
   - component: {fileID: 5995276513675544831}
   - component: {fileID: 6999894149549971327}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerProjectile
   m_TagString: PlayerProjectile
   m_Icon: {fileID: 0}
@@ -138,9 +138,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &6999894149549971327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,4 +155,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerProjectile
   gunDamage: 0
   hitForce: 0
-  collider: {fileID: 0}

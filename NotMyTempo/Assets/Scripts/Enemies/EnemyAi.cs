@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAi : MonoBehaviour
+public class EnemyAi : MonoBehaviour, IDamageable
 {
     public PlayerHealth player;
     public float health = 50f;
@@ -17,14 +17,17 @@ public class EnemyAi : MonoBehaviour
     private NavMeshAgent agent;
     private float nextAttack;
     private float nextUpdate;
+    private HitFlash hitFlash;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        hitFlash = GetComponent<HitFlash>();
         agent.stoppingDistance = attackRange * 0.8f;
 
         // Spread path updates across different frames.
         nextUpdate = Time.time + UnityEngine.Random.Range(0f, 0.25f);
+        if (player == null) { player = FindFirstObjectByType<PlayerHealth>(); }
     }
 
     void Update()
@@ -79,10 +82,14 @@ public class EnemyAi : MonoBehaviour
 
         health -= amount;
 
+        if (hitFlash != null) // does the hitflash thing
+            hitFlash.Flash();
+
         if (health <= 0f)
         {
             agent.enabled = false;
-            Destroy(gameObject);
+            GetComponent<Collider>().enabled = false; // dead enemies stop blocking shots
+            Destroy(gameObject, 0.08f); // short delay so the killing shot flashes too
         }
     }
 }
