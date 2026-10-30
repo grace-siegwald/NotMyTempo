@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EnemyGym.unity
     guid: 20cbde3ee028a224aa7482e837f53293
+  - enabled: 1
+    path: Assets/Scenes/LevelGreyBox.unity
+    guid: cb76ae7e7902e6448863ae97b5c4e5c6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
