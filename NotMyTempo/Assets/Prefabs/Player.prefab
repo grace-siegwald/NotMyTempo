@@ -256,11 +256,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ac21c64be0e9a41aab374c34674354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RaycastShootComplete
-  gunDamage: 1
+  gunDamage: 10
   fireRate: 0.25
   weaponRange: 50
   hitForce: 100
   gunEnd: {fileID: 1192667421192192515}
+  shootableLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   fireActionSecondary: {fileID: -4090225696740746782, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   ProjectileForce: 1500

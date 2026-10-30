@@ -154,7 +154,7 @@ MonoBehaviour:
   player: {fileID: 0}
   health: 50
   attackRange: 1.8
-  damage: 10
+  damage: 20
   attackCooldown: 1.2
   walls:
     serializedVersion: 2

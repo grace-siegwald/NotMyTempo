@@ -77,7 +77,7 @@ public class EnemyAi : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
-        if (amount <= 0f || health <= 0f)
+        if (amount <= 0f || health <= 0f) // guards against double counting a death
             return;
 
         health -= amount;
@@ -87,6 +87,7 @@ public class EnemyAi : MonoBehaviour, IDamageable
 
         if (health <= 0f)
         {
+            EnemyEvents.ReportKill(gameObject); // gameObject is kinda like "this" keyword, referece to the game object this script is attatched to
             agent.enabled = false;
             GetComponent<Collider>().enabled = false; // dead enemies stop blocking shots
             Destroy(gameObject, 0.08f); // short delay so the killing shot flashes too
