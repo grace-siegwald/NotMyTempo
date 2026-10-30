@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class Conductor : MonoBehaviour
 {
@@ -15,10 +16,7 @@ public class Conductor : MonoBehaviour
     // is your input within buffer
     public bool isWithinBuffer;
 
-    
-    [SerializeField] private Image reticle; 
-    [SerializeField] private Vector3 baseReticleSize;
-    [SerializeField] private Vector3 timedReticleSize;
+    public event Action OnBeat;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -38,12 +36,10 @@ public class Conductor : MonoBehaviour
         }
         else if (beatMarker >= deltaTimeNumber - buffer | beatMarker <= buffer)
         {
-            reticle.gameObject.transform.localScale = timedReticleSize;
             isWithinBuffer = true;
         }
         else
         {
-            reticle.gameObject.transform.localScale = baseReticleSize;
             isWithinBuffer = false;
         }
     }
@@ -52,8 +48,8 @@ public class Conductor : MonoBehaviour
     {
         Debug.Log("Beat");
 
-        beatMarker = 0;
+        beatMarker -= deltaTimeNumber;
 
-        reticle.gameObject.transform.localScale = timedReticleSize;
+        OnBeat?.Invoke();
     }
 }
