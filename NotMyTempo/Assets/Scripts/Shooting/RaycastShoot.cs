@@ -38,6 +38,9 @@ public class RaycastShoot : MonoBehaviour
 
         // Get and store a reference to our Camera by searching this GameObject and its parents
         fpsCam = GetComponentInParent<Camera>();
+
+        // Never let the gun hit the player, whatever the Inspector says
+        shootableLayers &= ~LayerMask.GetMask("Player");
     }
 
 
