@@ -41093,7 +41093,7 @@ MonoBehaviour:
       Data4: 117223259
     Path: event:/MusicSystem
   Event: 
-  EventPlayTrigger: 0
+  EventPlayTrigger: 1
   EventStopTrigger: 2
   AllowFadeout: 1
   TriggerOnce: 0
@@ -41134,6 +41134,7 @@ MonoBehaviour:
   deltaTimeNumber: 0
   bpm: 120
   buffer: 0.1
+  isWithinBuffer: 0
   reticle: {fileID: 1310661241}
   baseReticleSize: {x: 0.5, y: 0.5, z: 0.5}
   timedReticleSize: {x: 1, y: 1, z: 1}

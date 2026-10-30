@@ -10,7 +10,7 @@ public class Conductor : MonoBehaviour
     [SerializeField] private int bpm;
 
     [SerializeField] private float buffer;
-    [SerializeField] private bool isWithinBuffer;
+    public bool isWithinBuffer;
 
     [SerializeField] private Image reticle;
     [SerializeField] private Vector3 baseReticleSize;
@@ -34,11 +34,12 @@ public class Conductor : MonoBehaviour
         }
         else if (beatMarker >= deltaTimeNumber +- buffer)
         {
-            reticle.gameObject.transform.localScale = baseReticleSize;
+            reticle.gameObject.transform.localScale = timedReticleSize;
             isWithinBuffer = true;
         }
         else
         {
+            reticle.gameObject.transform.localScale = baseReticleSize;
             isWithinBuffer = false;
         }
     }
