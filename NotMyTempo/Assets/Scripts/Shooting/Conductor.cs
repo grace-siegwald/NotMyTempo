@@ -1,18 +1,22 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using TMPro;
 
 public class Conductor : MonoBehaviour
 {
-    public float beatMarker;
+    // the current time since last beat
+    public float beatMarker; 
+    [Tooltip("The maximum time since last beat, at 120bpm its 0.5")]
     [SerializeField] private float deltaTimeNumber;
+    [Tooltip("The beats per minute")]
     [SerializeField] private int bpm;
-
+    [Tooltip("Input buffer window, smaller = tigther timing, larger = more forgiving")]
     [SerializeField] private float buffer;
+    // is your input within buffer
     public bool isWithinBuffer;
 
-    [SerializeField] private Image reticle;
+    
+    [SerializeField] private Image reticle; 
     [SerializeField] private Vector3 baseReticleSize;
     [SerializeField] private Vector3 timedReticleSize;
 
