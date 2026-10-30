@@ -41064,6 +41064,7 @@ GameObject:
   m_Component:
   - component: {fileID: 516975859}
   - component: {fileID: 516975858}
+  - component: {fileID: 516975860}
   m_Layer: 0
   m_Name: MusicManager
   m_TagString: Untagged
@@ -41092,7 +41093,7 @@ MonoBehaviour:
       Data4: 117223259
     Path: event:/MusicSystem
   Event: 
-  EventPlayTrigger: 1
+  EventPlayTrigger: 0
   EventStopTrigger: 2
   AllowFadeout: 1
   TriggerOnce: 0
@@ -41117,6 +41118,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &516975860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 516975857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4501a71e9f066df44a8bd4f61df9a5fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  beatMarker: 0
+  deltaTimeNumber: 0
+  bpm: 120
+  buffer: 0.1
+  reticle: {fileID: 1310661241}
+  baseReticleSize: {x: 0.5, y: 0.5, z: 0.5}
+  timedReticleSize: {x: 1, y: 1, z: 1}
 --- !u!1 &521615666
 GameObject:
   m_ObjectHideFlags: 0
