@@ -541,6 +541,7 @@ GameObject:
   - component: {fileID: 1252778109520367336}
   - component: {fileID: 529886008042086090}
   - component: {fileID: 5898614285976194355}
+  - component: {fileID: 3158394883780799947}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -666,3 +667,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
+--- !u!114 &3158394883780799947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9204545892706032398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82d331f3f8f5df3478275d4f2ca89d48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathHandler
+  motor: {fileID: 0}
+  look: {fileID: 0}
+  input: {fileID: 0}
+  gun: {fileID: 0}
