@@ -42,6 +42,8 @@ public class RaycastShoot : MonoBehaviour
         fpsCam = GetComponentInParent<Camera>();
 
         conductor = FindAnyObjectByType<Conductor>();
+        // Never let the gun hit the player, whatever the Inspector says
+        shootableLayers &= ~LayerMask.GetMask("Player");
     }
 
 

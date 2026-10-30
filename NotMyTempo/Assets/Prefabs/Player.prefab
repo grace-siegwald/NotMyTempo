@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1192667421192192515}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GunEnd
   m_TagString: Player
   m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
@@ -42,11 +42,10 @@ GameObject:
   - component: {fileID: 7792267449833593013}
   - component: {fileID: 4537954406961399078}
   - component: {fileID: 38279432945479780}
-  - component: {fileID: 7787925117388246896}
   - component: {fileID: 8109804386306795130}
   - component: {fileID: 7298046775042093687}
   - component: {fileID: 2500782928151275912}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Gun
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -126,27 +125,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7787925117388246896
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2722618607240351796}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &8109804386306795130
 AudioSource:
   m_ObjectHideFlags: 0
@@ -256,11 +234,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58ac21c64be0e9a41aab374c34674354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RaycastShootComplete
-  gunDamage: 1
+  gunDamage: 10
   fireRate: 0.25
   weaponRange: 50
   hitForce: 100
   gunEnd: {fileID: 1192667421192192515}
+  shootableLayers:
+    serializedVersion: 2
+    m_Bits: 503
   fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   fireActionSecondary: {fileID: -4090225696740746782, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   ProjectileForce: 1500
@@ -419,7 +400,7 @@ GameObject:
   - component: {fileID: 280355898013963677}
   - component: {fileID: 9170759810937881064}
   - component: {fileID: 3465484825143327156}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
