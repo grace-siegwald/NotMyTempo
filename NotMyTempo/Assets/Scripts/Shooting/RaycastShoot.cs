@@ -20,6 +20,8 @@ public class RaycastShoot : MonoBehaviour
     private LineRenderer laserLine;                                        // Reference to the LineRenderer component which will display our laserline
     private float nextFire;                                                // Float to store the time the player will be allowed to fire again, after firing
 
+    private Conductor conductor;
+
 
     [SerializeField] private InputActionReference fireAction; // Reference to the Input Action for firing
     [SerializeField] private InputActionReference fireActionSecondary; // Reference to the Input Action for firing non-raycast projectiles
@@ -39,6 +41,7 @@ public class RaycastShoot : MonoBehaviour
         // Get and store a reference to our Camera by searching this GameObject and its parents
         fpsCam = GetComponentInParent<Camera>();
 
+        conductor = FindAnyObjectByType<Conductor>();
         // Never let the gun hit the player, whatever the Inspector says
         shootableLayers &= ~LayerMask.GetMask("Player");
     }
@@ -49,6 +52,15 @@ public class RaycastShoot : MonoBehaviour
         // Check if the player has pressed the fire button and if enough time has elapsed since they last fired
         if (fireAction.action.triggered && Time.time > nextFire && !fireActionSecondary.action.triggered) 
         {
+            if(conductor != null && conductor.isWithinBuffer == true)
+            {
+                Debug.Log("Raycast Timed Correctly");
+            }
+            else
+            {
+                Debug.Log("Raycast Timed Incorrectly");
+            }
+
             // Update the time when our player can fire next
             nextFire = Time.time + fireRate;
 
@@ -102,6 +114,15 @@ public class RaycastShoot : MonoBehaviour
 
     private void ShootProjectile()
     {
+        if(conductor != null && conductor.isWithinBuffer == true)
+        {
+            Debug.Log("Projectile Timed Correctly");
+        }
+        else
+        {
+            Debug.Log("Projectile Timed Incorrectly");
+        }
+                            
         // Update the time when our player can fire next
         nextFire = Time.time + fireRate;
 
