@@ -32,7 +32,7 @@ public class Conductor : MonoBehaviour
         {
             DoBeat();
         }
-        else if (beatMarker >= deltaTimeNumber +- buffer)
+        else if (beatMarker >= deltaTimeNumber - buffer | beatMarker <= buffer)
         {
             reticle.gameObject.transform.localScale = timedReticleSize;
             isWithinBuffer = true;
