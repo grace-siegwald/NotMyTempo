@@ -11,6 +11,7 @@ using FMOD.Studio;
 /// 
 /// Listen to OnActionJudged to see if the player acted on the beat or not, and how far off they were.
 /// </summary>
+public enum ActionJudgement { OnBeat, Early, Late } // the three possible judgements for an action
 public class Conductor : MonoBehaviour
 {
     [Header("Music")]
@@ -31,6 +32,7 @@ public class Conductor : MonoBehaviour
     public float SecondsPerBeat { get { return 60f / bpm; } } // how many seconds each beat lasts
     public int BeatNumber { get; private set; } = -1; // how many beats have passed since the start of the song
     public bool isWithinBuffer { get { return Math.Abs(OffsetFromNearestBeat()) <= buffer; } } // true if the player is within the buffer of a beat
+    public ActionJudgement Judgement;
 
     private EventInstance music; // just a reference to the event instance (for getting SongTime)
     public float SongTime // calculates how many seconds have passed since the song started, according to FMOD
@@ -81,6 +83,20 @@ public class Conductor : MonoBehaviour
         float offset = OffsetFromNearestBeat();
         bool isOnBeat = Math.Abs(offset) <= buffer; // is the offset within the buffer? if so, it's on beat
         OnActionJudged?.Invoke(isOnBeat, offset); // tell any listeners what happened
+
+        if (isOnBeat)
+        {
+            Judgement = ActionJudgement.OnBeat;
+        }
+        else if (offset < 0f)
+        {
+            Judgement = ActionJudgement.Early;
+        }
+        else
+        {
+            Judgement = ActionJudgement.Late;
+        }
+
         return isOnBeat;
     }
 

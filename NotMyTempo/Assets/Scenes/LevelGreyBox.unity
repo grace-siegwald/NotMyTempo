@@ -73588,6 +73588,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 191362783637291580, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: _mouseSensitivity
+      value: 0.07
+      objectReference: {fileID: 0}
     - target: {fileID: 280355898013963677, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: field of view
       value: 81.24145
