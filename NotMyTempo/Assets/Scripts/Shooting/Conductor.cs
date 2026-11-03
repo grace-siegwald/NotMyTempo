@@ -34,7 +34,7 @@ public class Conductor : MonoBehaviour
         {
             DoBeat();
         }
-        else if (beatMarker >= deltaTimeNumber - buffer | beatMarker <= buffer)
+        else if (beatMarker >= deltaTimeNumber - buffer || beatMarker <= buffer)
         {
             isWithinBuffer = true;
         }
