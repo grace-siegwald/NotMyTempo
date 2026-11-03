@@ -8,6 +8,8 @@ using FMOD.Studio;
 /// so beats always line up with what the player hears.
 /// Listen to OnBeat for things that happen every beat, or check
 /// isWithinBuffer when the player acts.
+/// 
+/// Listen to OnActionJudged to see if the player acted on the beat or not, and how far off they were.
 /// </summary>
 public class Conductor : MonoBehaviour
 {
@@ -25,6 +27,7 @@ public class Conductor : MonoBehaviour
 
     // Properties
     public event Action OnBeat; // fires once on every beat
+    public event Action<bool, float> OnActionJudged; // fires when the player does something that is "judged" against the beat, passing (isOnBeat, offsetFromNearestBeat)
     public float SecondsPerBeat { get { return 60f / bpm; } } // how many seconds each beat lasts
     public int BeatNumber { get; private set; } = -1; // how many beats have passed since the start of the song
     public bool isWithinBuffer { get { return Math.Abs(OffsetFromNearestBeat()) <= buffer; } } // true if the player is within the buffer of a beat
@@ -49,7 +52,7 @@ public class Conductor : MonoBehaviour
     private void Update() // beat detection every frame, checks if we've passed a beat, and fires OnBeat if we have
     {
         int beat = Mathf.FloorToInt(SongTime / SecondsPerBeat); // divide the song time by the beat length and round down to get the current beat number
-        if (beat > BeatNumber) // then, if the current beat number is greater than the last one we recorded, we have passed a beat
+        if (beat >= 0 && beat != BeatNumber) // then, if the current beat number is greater than the last one we recorded, we have passed a beat
         {
             // so we update the beat number and fire the event! very cool
             BeatNumber = beat; 
@@ -71,6 +74,16 @@ public class Conductor : MonoBehaviour
 
         return distanceIntoBeat;
     }
+
+    // Judges an action that's happening right now, returns true if it was on beat, and tells any listeners of OnActionJudged :)
+    public bool JudgeAction() 
+    {
+        float offset = OffsetFromNearestBeat();
+        bool isOnBeat = Math.Abs(offset) <= buffer; // is the offset within the buffer? if so, it's on beat
+        OnActionJudged?.Invoke(isOnBeat, offset); // tell any listeners what happened
+        return isOnBeat;
+    }
+
     private void OnDestroy()
     {
         music.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
