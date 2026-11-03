@@ -76,8 +76,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4501a71e9f066df44a8bd4f61df9a5fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  beatMarker: 0
-  deltaTimeNumber: 0
+  musicEvent:
+    Guid:
+      Data1: -1771680833
+      Data2: 1252503257
+      Data3: -613400186
+      Data4: 117223259
+    Path: event:/MusicSystem
   bpm: 120
   buffer: 0.1
-  isWithinBuffer: 0
+  latencyCompensation: 0

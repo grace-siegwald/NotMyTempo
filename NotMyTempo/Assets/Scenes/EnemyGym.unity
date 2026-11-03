@@ -2710,6 +2710,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: MusicManager
       objectReference: {fileID: 0}
+    - target: {fileID: 5373599672785224637, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
+      propertyPath: musicEvent.Path
+      value: event:/MusicSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 5373599672785224637, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
+      propertyPath: musicEvent.Guid.Data1
+      value: -1771680833
+      objectReference: {fileID: 0}
+    - target: {fileID: 5373599672785224637, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
+      propertyPath: musicEvent.Guid.Data2
+      value: 1252503257
+      objectReference: {fileID: 0}
+    - target: {fileID: 5373599672785224637, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
+      propertyPath: musicEvent.Guid.Data3
+      value: -613400186
+      objectReference: {fileID: 0}
+    - target: {fileID: 5373599672785224637, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
+      propertyPath: musicEvent.Guid.Data4
+      value: 117223259
+      objectReference: {fileID: 0}
     - target: {fileID: 5469164993111652166, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -57.28
