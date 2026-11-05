@@ -13,6 +13,7 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("The Enemy prefab from the Project window (needs EnemyAi + NavMeshAgent)")]
     [SerializeField] private EnemyAi enemyPrefab;
 
+
     [Tooltip("Where ground enemies can appear")]
     [SerializeField] private Transform[] spawnPoints;
 
