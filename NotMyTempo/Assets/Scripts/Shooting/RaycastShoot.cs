@@ -5,20 +5,24 @@ using System;
 
 public class RaycastShoot : MonoBehaviour 
 {
+    [Tooltip("Damage multiplier for shots fired on the beat")]
+    [SerializeField] private float onBeatDamageMultiplier = 2f;
 
-    public int gunDamage = 1;                                            // Set the number of hitpoints that this gun will take away from shot objects with a health script
-    public float fireRate = 0.25f;                                        // Number in seconds which controls how often the player can fire
-    public float weaponRange = 50f;                                        // Distance in Unity units over which the player can fire
-    public float hitForce = 100f;                                        // Amount of force which will be added to objects with a rigidbody shot by the player
-    public Transform gunEnd;                                            // Holds a reference to the gun end object, marking the muzzle location of the gun
+    public float gunDamage = 1f; // Set the number of hitpoints that this gun will take away from shot objects with a health script
+    public float fireRate = 0.25f; // Number in seconds which controls how often the player can fire
+    public float weaponRange = 50f; // Distance in Unity units over which the player can fire
+    public float hitForce = 100f; // Amount of force which will be added to objects with a rigidbody shot by the player
+    public Transform gunEnd; // Holds a reference to the gun end object, marking the muzzle location of the gun
     [Tooltip("Layers the gun can hit. Untick Player so you can't shoot yourself.")]
     public LayerMask shootableLayers = ~0; // ~0 means "Everything"
 
-    private Camera fpsCam;                                                // Holds a reference to the first person camera
-    private WaitForSeconds shotDuration = new WaitForSeconds(0.07f);    // WaitForSeconds object used by our ShotEffect coroutine, determines time laser line will remain visible
-    private AudioSource gunAudio;                                        // Reference to the audio source which will play our shooting sound effect
-    private LineRenderer laserLine;                                        // Reference to the LineRenderer component which will display our laserline
-    private float nextFire;                                                // Float to store the time the player will be allowed to fire again, after firing
+    private Camera fpsCam; // Holds a reference to the first person camera
+    private WaitForSeconds shotDuration = new WaitForSeconds(0.07f); // WaitForSeconds object used by our ShotEffect coroutine, determines time laser line will remain visible
+    private AudioSource gunAudio; // Reference to the audio source which will play our shooting sound effect
+    private LineRenderer laserLine; // Reference to the LineRenderer component which will display our laserline
+    private float nextFire; // Float to store the time the player will be allowed to fire again, after firing
+
+    private Conductor conductor;
 
 
     [SerializeField] private InputActionReference fireAction; // Reference to the Input Action for firing
@@ -38,6 +42,10 @@ public class RaycastShoot : MonoBehaviour
 
         // Get and store a reference to our Camera by searching this GameObject and its parents
         fpsCam = GetComponentInParent<Camera>();
+
+        conductor = FindAnyObjectByType<Conductor>();
+        // Never let the gun hit the player, whatever the Inspector says
+        shootableLayers &= ~LayerMask.GetMask("Player");
     }
 
 
@@ -46,6 +54,10 @@ public class RaycastShoot : MonoBehaviour
         // Check if the player has pressed the fire button and if enough time has elapsed since they last fired
         if (fireAction.action.triggered && Time.time > nextFire && !fireActionSecondary.action.triggered) 
         {
+            // Judge the shot once, and use that answer for everything below
+            bool onBeat = conductor != null && conductor.JudgeAction();
+            float damage = onBeat ? gunDamage * onBeatDamageMultiplier : gunDamage; // one line if statement to determine damage based on whether the shot was on beat
+
             // Update the time when our player can fire next
             nextFire = Time.time + fireRate;
 
@@ -74,7 +86,7 @@ public class RaycastShoot : MonoBehaviour
                 // If it can, hurt it
                 if (target != null)
                 {
-                    target.TakeDamage(gunDamage);
+                    target.TakeDamage(damage);
                 }
 
                 // Check if the object we hit has a rigidbody attached
@@ -99,6 +111,10 @@ public class RaycastShoot : MonoBehaviour
 
     private void ShootProjectile()
     {
+        // Judge the shot once, and use that answer for everything below
+        bool onBeat = conductor != null && conductor.JudgeAction();
+        float damage = onBeat ? gunDamage * onBeatDamageMultiplier : gunDamage; // one line if statement to determine damage based on whether the shot was on beat
+
         // Update the time when our player can fire next
         nextFire = Time.time + fireRate;
 
@@ -108,7 +124,7 @@ public class RaycastShoot : MonoBehaviour
         // Get the Rigidbody component of the projectile
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
-        projectile.GetComponent<ProjectileShoot>().gunDamage = gunDamage; // Set the damage of the projectile
+        projectile.GetComponent<ProjectileShoot>().gunDamage = damage; // Set the damage of the projectile
         projectile.GetComponent<ProjectileShoot>().hitForce = hitForce; // Set the hit force of the projectile
 
         // Apply a forward force to the projectile

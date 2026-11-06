@@ -15,6 +15,8 @@ MonoBehaviour:
   _groundSpeed: 10
   _groundAcceleration: 100
   _groundDeceleration: 80
+  _overspeedDeceleration: 20
+  _landingGraceTime: 0.12
   _gravity: 30
   _fallGravityMultiplier: 1.4
   _maxFallSpeed: 50
@@ -23,3 +25,8 @@ MonoBehaviour:
   _jumpHeight: 2.5
   _airJumps: 1
   _coyoteTime: 0.12
+  _dashSpeed: 30
+  _dashDuration: 0.15
+  _dashCharges: 3
+  _dashRechargeTime: 1
+  _dashExitSpeed: 14
