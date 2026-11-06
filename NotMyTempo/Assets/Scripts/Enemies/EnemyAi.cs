@@ -16,10 +16,10 @@ public class EnemyAi : MonoBehaviour, IDamageable
     private Vector3 climbLanding;
 
     public PlayerHealth player;
-    public float health = 50f;
-    public float attackRange = 1.8f;
-    public float damage = 10f;
-    public float attackCooldown = 1.2f;
+    public virtual float health { get; set; } = 50f;
+    public virtual float attackRange { get; set; } = 1.8f;
+    public virtual float damage { get; set; } = 10f;
+    public virtual float attackCooldown { get; set; } = 1.2f;
 
     public LayerMask walls;
 

@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public class FlyingEnemyAi : MonoBehaviour
+public class FlyingEnemyAi : MonoBehaviour, IDamageable
 {
     public PlayerHealth player;
 
     public float speed = 3f;
     public float heightAbovePlayer = 1f;
 
-    public float health = 30f;
-    public float attackRange = 2f;
-    public float damage = 10f;
-    public float attackCooldown = 1f;
+    public float health { get; set; } = 30f;
+    public float attackRange { get; set; } = 2f;
+    public float damage { get; set; } = 10f;
+    public float attackCooldown { get; set; } = 1f;
 
     public LayerMask walls;
     private HitFlash hitFlash;
@@ -68,7 +68,6 @@ public class FlyingEnemyAi : MonoBehaviour
             nextAttackTime = Time.time + attackCooldown;
         }
     }
-
     public void TakeDamage(float amount)
     {
         if (amount <= 0f || health <= 0f)
