@@ -73596,6 +73596,30 @@ PrefabInstance:
       propertyPath: field of view
       value: 81.24145
       objectReference: {fileID: 0}
+    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.b
+      value: 0.15686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.g
+      value: 0.23921569
+      objectReference: {fileID: 0}
+    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.r
+      value: 0.5568628
+      objectReference: {fileID: 0}
+    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Parameters.colorGradient.m_ColorSpace
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Name
+      value: Pistol
+      objectReference: {fileID: 0}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -73640,13 +73664,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7298046775042093687, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1274715822}
+    - targetCorrespondingSourceObject: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1488994645}
   m_SourcePrefab: {fileID: 100100000, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
 --- !u!43 &703904759
 Mesh:
@@ -111733,6 +111761,36 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1488994638 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+  m_PrefabInstance: {fileID: 668063313}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1488994645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488994638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58ac21c64be0e9a41aab374c34674354, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RaycastShoot
+  onBeatDamageMultiplier: 2
+  gunDamage: 1
+  fireRate: 0.25
+  weaponRange: 50
+  hitForce: 100
+  gunEnd: {fileID: 0}
+  shootableLayers:
+    serializedVersion: 2
+    m_Bits: 247
+  fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  fireActionSecondary: {fileID: -4256756060003506530, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  ProjectileForce: 1500
+  projectilePrefab: {fileID: 4971078883729087901, guid: cf07da25b563bf64492eaebd301eb04a, type: 3}
 --- !u!43 &1500508944
 Mesh:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ public class PlayerDeathHandler : MonoBehaviour
     [Tooltip("Found automatically if left empty")]
     [SerializeField] private PlayerInput input;
     [Tooltip("Found automatically if left empty (searches the Player's children)")]
-    [SerializeField] private RaycastShoot gun;
+    [SerializeField] private Gun gun;
 
     private PlayerHealth health;
 
@@ -25,7 +25,7 @@ public class PlayerDeathHandler : MonoBehaviour
         if (motor == null) motor = GetComponent<PlayerMotor>();
         if (look == null) look = GetComponent<PlayerLook>();
         if (input == null) input = GetComponent<PlayerInput>();
-        if (gun == null) gun = GetComponentInChildren<RaycastShoot>();
+        if (gun == null) gun = GetComponentInChildren<Gun>();
     }
 
     private void OnEnable()
