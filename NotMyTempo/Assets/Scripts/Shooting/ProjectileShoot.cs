@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ProjectileShoot : MonoBehaviour
 {
-    public int gunDamage; // Damage dealt by the projectile
+    public float gunDamage; // Damage dealt by the projectile
     public float hitForce; // Force applied to the object hit by the projectile
 
     private void OnCollisionEnter(Collision collision)
