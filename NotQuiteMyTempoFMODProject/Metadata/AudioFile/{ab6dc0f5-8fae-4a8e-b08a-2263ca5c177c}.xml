@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{ab6dc0f5-8fae-4a8e-b08a-2263ca5c177c}">
+		<property name="assetPath">
+			<value>grunt.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>24</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.69599999999999995</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1c86a496-45e8-4a7c-bdcd-5a6e724734d8}</destination>
+		</relationship>
+	</object>
+</objects>
