@@ -545,10 +545,11 @@ GameObject:
   - component: {fileID: 4537954406961399078}
   - component: {fileID: 38279432945479780}
   - component: {fileID: 8109804386306795130}
-  - component: {fileID: 7298046775042093687}
   - component: {fileID: 2500782928151275912}
+  - component: {fileID: 5416657574063369553}
+  - component: {fileID: 8305007632489990752}
   m_Layer: 3
-  m_Name: Gun
+  m_Name: Pistol
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -724,31 +725,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7298046775042093687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2722618607240351796}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ac21c64be0e9a41aab374c34674354, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RaycastShootComplete
-  onBeatDamageMultiplier: 2
-  gunDamage: 10
-  fireRate: 0.25
-  weaponRange: 50
-  hitForce: 100
-  gunEnd: {fileID: 1192667421192192515}
-  shootableLayers:
-    serializedVersion: 2
-    m_Bits: 503
-  fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  fireActionSecondary: {fileID: -4090225696740746782, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  ProjectileForce: 1500
-  projectilePrefab: {fileID: 4971078883729087901, guid: cf07da25b563bf64492eaebd301eb04a, type: 3}
 --- !u!120 &2500782928151275912
 LineRenderer:
   serializedVersion: 3
@@ -757,7 +733,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2722618607240351796}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -821,7 +797,7 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.5568628, g: 0.23921569, b: 0.15686275, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -846,7 +822,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -859,6 +835,46 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &5416657574063369553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2722618607240351796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58ac21c64be0e9a41aab374c34674354, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RaycastShoot
+  damage: 10
+  fireCooldown: 0.25
+  hitForce: 100
+  deliveryMethod: 0
+  muzzle: {fileID: 1192667421192192515}
+  range: 50
+  shootableLayers:
+    serializedVersion: 2
+    m_Bits: 247
+  laserDuration: 0.07
+  projectilePrefab: {fileID: 4971078883729087901, guid: cf07da25b563bf64492eaebd301eb04a, type: 3}
+  projectileForce: 1500
+--- !u!114 &8305007632489990752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2722618607240351796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aaa316d00260b64b8147ba5772d2492, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SingleShotArchetype
+  fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  altFireAction: {fileID: 0}
+  crosshair: {fileID: 6689410397823816527}
+  onBeatDamageMultiplier: 2
 --- !u!1 &4175666968459090660
 GameObject:
   m_ObjectHideFlags: 0
@@ -1582,7 +1598,7 @@ Camera:
     height: 1
   near clip plane: 0.05
   far clip plane: 1000
-  field of view: 58.379105
+  field of view: 81.24145
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1674,6 +1690,7 @@ GameObject:
   - component: {fileID: 529886008042086090}
   - component: {fileID: 5898614285976194355}
   - component: {fileID: 3158394883780799947}
+  - component: {fileID: 7256194767812660223}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -1740,7 +1757,7 @@ MonoBehaviour:
   _lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _jumpAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _dashAction: {fileID: 2123350996040546270, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  _mouseSensitivity: 0.1
+  _mouseSensitivity: 0.07
   _gamepadLookSpeed: 200
   _isVerticalLookInverted: 0
   _bufferTime: 0.15
@@ -1817,6 +1834,20 @@ MonoBehaviour:
   look: {fileID: 0}
   input: {fileID: 0}
   gun: {fileID: 0}
+--- !u!114 &7256194767812660223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9204545892706032398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
+  nonRigidbodyVelocity: 0
+  attenuationObject: {fileID: 0}
 --- !u!1001 &7400377262964543185
 PrefabInstance:
   m_ObjectHideFlags: 0
