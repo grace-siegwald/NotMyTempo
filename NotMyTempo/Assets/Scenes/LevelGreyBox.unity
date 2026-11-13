@@ -73588,10 +73588,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3180024606230957420, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: buffer
-      value: 0.2
-      objectReference: {fileID: 0}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -73632,33 +73628,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6428345220970984197, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: nearlyFullSpread
-      value: 11
+    - target: {fileID: 7446721202678990083, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: shotSpread
+      value: 15
       objectReference: {fileID: 0}
-    - target: {fileID: 6669687807762028997, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Enabled
-      value: 0
+    - target: {fileID: 7446721202678990083, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: kickDuration
+      value: 0.3
       objectReference: {fileID: 0}
-    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: beatsBeforeFizzle
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: beatsToFullCharge
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8858089334154371782, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 8858089334154371782, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 60
+    - target: {fileID: 7446721202678990083, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: shotLengthScale
+      value: 0.705
       objectReference: {fileID: 0}
     - target: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_Name

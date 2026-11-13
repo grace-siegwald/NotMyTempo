@@ -260,8 +260,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3981057851930198131}
-  - {fileID: 6889128645182229662}
   - {fileID: 8858089334154371782}
+  - {fileID: 6889128645182229662}
   m_Father: {fileID: 969787447297579362}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -942,7 +942,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2722618607240351796}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6aaa316d00260b64b8147ba5772d2492, type: 3}
   m_Name: 
@@ -958,7 +958,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2722618607240351796}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 467aa0c50e781934284b1afd01476702, type: 3}
   m_Name: 
@@ -998,7 +998,7 @@ GameObject:
   - component: {fileID: 8829485097386259853}
   - component: {fileID: 5655572872247789292}
   m_Layer: 5
-  m_Name: TickLeft
+  m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1073,7 +1073,7 @@ GameObject:
   - component: {fileID: 3224215202406288920}
   - component: {fileID: 5795975146847172147}
   m_Layer: 5
-  m_Name: TickTop
+  m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1303,7 +1303,7 @@ GameObject:
   - component: {fileID: 3666789773285941800}
   - component: {fileID: 6098153917077523698}
   m_Layer: 5
-  m_Name: CenterDot
+  m_Name: Dot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1633,9 +1633,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3981057851930198131}
   - component: {fileID: 7371234797012633811}
-  - component: {fileID: 932136870812898584}
+  - component: {fileID: 7446721202678990083}
   m_Layer: 5
-  m_Name: Crosshair
+  m_Name: SingleShotCrosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1673,7 +1673,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6689410397823816527}
   m_CullTransparentMesh: 1
---- !u!114 &932136870812898584
+--- !u!114 &7446721202678990083
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1682,12 +1682,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 6689410397823816527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a363b8ceff79ff4d911225d6beb4077, type: 3}
+  m_Script: {fileID: 11500000, guid: 969ecaf8256165b4fae95b8d99f70ccf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CrosshairPulse
-  conductor: {fileID: 3180024606230957420}
-  pulseScale: 2.3
-  returnSpeed: 20
+  m_EditorClassIdentifier: Assembly-CSharp::SingleShotCrosshair
+  fizzleDuration: 0.35
+  fizzleShakeDistance: 6
+  fizzleColor: {r: 1, g: 0.2, b: 0.25, a: 1}
+  archetype: {fileID: 8305007632489990752}
+  ticks:
+  - {fileID: 3944787232310878588}
+  - {fileID: 3437607551636889391}
+  - {fileID: 3305683497982484865}
+  - {fileID: 8790438171960565556}
+  centerDot: {fileID: 6324685231549128555}
+  idleSpread: 15.19
+  shotSpread: 23.1
+  shotLengthScale: 1
+  kickDuration: 0.3
+  crosshairColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6713427786557743497
 GameObject:
   m_ObjectHideFlags: 0
@@ -1902,7 +1914,7 @@ GameObject:
   - component: {fileID: 207890611017105541}
   - component: {fileID: 6881683305949421067}
   m_Layer: 5
-  m_Name: TickBottom
+  m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2103,7 +2115,7 @@ GameObject:
   - component: {fileID: 7479191134256190729}
   - component: {fileID: 856531668938528493}
   m_Layer: 5
-  m_Name: TickRight
+  m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2545,17 +2557,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
---- !u!114 &3180024606230957420 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5373599672785224637, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
-  m_PrefabInstance: {fileID: 7400377262964543185}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6710419769007082706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4501a71e9f066df44a8bd4f61df9a5fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
 --- !u!4 &3266529736000207255 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5469164993111652166, guid: c1142d9f5e47edb4ba434fa22f417dc5, type: 3}
