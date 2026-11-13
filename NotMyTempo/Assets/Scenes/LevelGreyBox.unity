@@ -73588,37 +73588,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 191362783637291580, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: _mouseSensitivity
-      value: 0.07
-      objectReference: {fileID: 0}
-    - target: {fileID: 280355898013963677, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: field of view
-      value: 81.24145
-      objectReference: {fileID: 0}
-    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.b
-      value: 0.15686275
-      objectReference: {fileID: 0}
-    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0.23921569
-      objectReference: {fileID: 0}
-    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.5568628
-      objectReference: {fileID: 0}
-    - target: {fileID: 2500782928151275912, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Parameters.colorGradient.m_ColorSpace
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: m_Name
-      value: Pistol
+    - target: {fileID: 3180024606230957420, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: buffer
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
@@ -73660,27 +73632,43 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6428345220970984197, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: nearlyFullSpread
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6669687807762028997, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: beatsBeforeFizzle
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: beatsToFullCharge
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8858089334154371782, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8858089334154371782, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7298046775042093687, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1274715822}
-    - targetCorrespondingSourceObject: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1488994645}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
---- !u!4 &668063314 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1192667421192192515, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-  m_PrefabInstance: {fileID: 668063313}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &703904759
 Mesh:
   m_ObjectHideFlags: 0
@@ -108792,25 +108780,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1 &1274715814 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-  m_PrefabInstance: {fileID: 668063313}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1274715822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1274715814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86c6556701af9e04380698b89f691b6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
-  nonRigidbodyVelocity: 0
-  attenuationObject: {fileID: 0}
 --- !u!1 &1280204633
 GameObject:
   m_ObjectHideFlags: 0
@@ -111766,35 +111735,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1 &1488994638 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-  m_PrefabInstance: {fileID: 668063313}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1488994645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1488994638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ac21c64be0e9a41aab374c34674354, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RaycastShoot
-  damage: 10
-  fireCooldown: 0.25
-  hitForce: 100
-  deliveryMethod: 0
-  muzzle: {fileID: 668063314}
-  range: 50
-  shootableLayers:
-    serializedVersion: 2
-    m_Bits: 247
-  laserDuration: 0.07
-  projectilePrefab: {fileID: 4971078883729087901, guid: cf07da25b563bf64492eaebd301eb04a, type: 3}
-  projectileForce: 1500
 --- !u!43 &1500508944
 Mesh:
   m_ObjectHideFlags: 0

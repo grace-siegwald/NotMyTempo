@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Shared behaviour for the archetype crosshairs: shakes and flashes the fizzle color
+/// when the player loses a shot. Subclasses handle what's unique to their archetype.
+/// Put a CrosshairPulse on the same object for the on-beat pulse.
+/// </summary>
 [RequireComponent(typeof(RectTransform))] // to make sure were on a UI object
 public abstract class ArchetypeCrosshair : MonoBehaviour // abstract because it's a base class for the different crosshair types
 {
@@ -74,6 +79,40 @@ public abstract class ArchetypeCrosshair : MonoBehaviour // abstract because it'
         {
             pieces[i].rectTransform.anchoredPosition = directions[i] * distanceFromCenter;
             pieces[i].color = color;
+        }
+    }
+    /// <summary>
+    /// Remembers each piece's size from the editor, so lengths can be scaled from it later.
+    /// </summary>
+    protected static Vector2[] GetRestingSizes(Graphic[] pieces)
+    {
+        Vector2[] sizes = new Vector2[pieces.Length];
+        for (int i = 0; i < pieces.Length; i++)
+        {
+            sizes[i] = pieces[i].rectTransform.sizeDelta;
+        }
+        return sizes;
+    }
+
+    /// <summary>
+    /// Stretches or shrinks each piece along its long side only, so thin ticks stay thin.
+    /// 1 = editor length, 0.5 = half as long.
+    /// </summary>
+    protected static void ScalePieceLengths(Graphic[] pieces, Vector2[] restingSizes, float lengthScale)
+    {
+        for (int i = 0; i < pieces.Length; i++)
+        {
+            Vector2 size = restingSizes[i];
+            bool isTall = size.y >= size.x;
+            if (isTall)
+            {
+                size.y *= lengthScale;
+            }
+            else
+            {
+                size.x *= lengthScale;
+            }
+            pieces[i].rectTransform.sizeDelta = size;
         }
     }
 }

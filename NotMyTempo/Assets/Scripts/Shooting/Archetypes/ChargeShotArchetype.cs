@@ -91,7 +91,6 @@ public class ChargeShotArchetype : FireArchetype
     }
     private void Fizzle() // called when the player fizzes out the shot
     {
-        Debug.Log("Charge fizzled");
         IsCharging = false; // stop charging
         NotifyFizzled(); // notify any listeners that the shot fizzled
     }
