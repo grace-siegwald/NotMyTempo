@@ -73628,17 +73628,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7446721202678990083, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: shotSpread
-      value: 15
+    - target: {fileID: 6669687807762028997, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7446721202678990083, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: kickDuration
-      value: 0.3
+    - target: {fileID: 7595124780330760952, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7446721202678990083, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
-      propertyPath: shotLengthScale
-      value: 0.705
+    - target: {fileID: 8305007632489990752, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_Name
