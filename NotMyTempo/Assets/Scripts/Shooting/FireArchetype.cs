@@ -33,11 +33,11 @@ public abstract class FireArchetype : MonoBehaviour
     protected Gun Gun { get; private set; }
     protected Conductor Conductor { get; private set; }
     protected InputAction FireInput { get { return fireAction.action; } }
-    protected InputAction AltFireInput { get { return altFireAction != null ? altFireAction.action : null; } }
+    protected InputAction AltFireInput { get { return altFireAction != null ? altFireAction.action : null; } } // returns null if the archetype doesn't have a second input / one-line if-else statement
 
 
     // --- Unity methods ---
-    protected virtual void Awake()
+    protected virtual void Awake() // gets the Gun and Conductor references, checks for a Conductor, and shows the crosshair if it exists
     {
         Gun = GetComponent<Gun>(); 
         Conductor = FindAnyObjectByType<Conductor>(); 
@@ -54,7 +54,7 @@ public abstract class FireArchetype : MonoBehaviour
         }
     }
 
-    protected virtual void OnEnable()
+    protected virtual void OnEnable() // turns on the input actions and crosshair when the archetype is enabled
     {
         FireInput.Enable(); // turn on the input actions
         if (AltFireInput != null) 
@@ -67,7 +67,7 @@ public abstract class FireArchetype : MonoBehaviour
             crosshair.SetActive(true);
         }
     }
-    protected virtual void OnDisable()
+    protected virtual void OnDisable() // turns off the input actions and crosshair when the archetype is disabled
     {
         CancelShot();
 
@@ -92,4 +92,13 @@ public abstract class FireArchetype : MonoBehaviour
         return Conductor.SongTime / Conductor.SecondsPerBeat - beat;
     }
 
+    // --- Firing helpers ---
+    protected void NotifyFired()
+    {
+        Fired?.Invoke();
+    }
+    protected void NotifyFizzled()
+    {
+        Fizzled?.Invoke();
+    }
 }
