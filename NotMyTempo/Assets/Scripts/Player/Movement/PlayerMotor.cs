@@ -24,8 +24,17 @@ public class PlayerMotor : MonoBehaviour
     [Tooltip("Small force on player to keep them pressed on ground")]
     [SerializeField] private float _groundStickyForce = 3f; // small force on player to keep them pressed on ground
 
+    // Dimensions for Player Body
+    [Header("Body")]
+    [Tooltip("Capsule height when standing, m.")]
+    [SerializeField] private float _standingHeight = 1.8f;
+    [Tooltip("Capsule height when crouching or sliding, m.")]
+    [SerializeField] private float _crouchHeight = 1f;
+    [Tooltip("How fast the capsule shrinks or grows, m/s.")]
+    [SerializeField] private float _heightChangeSpeed = 10f;
 
-    // fields / getting components
+
+    // constants / getting components
     private CharacterController _controller;
     private PlayerInput _inputReader;
     private readonly List<MovementAbility> _abilities = new List<MovementAbility>();
@@ -38,6 +47,9 @@ public class PlayerMotor : MonoBehaviour
     private float _landedTime = float.NegativeInfinity;
     private int _airJumpsUsed; // number of air jumps that have been used by the player
     private bool _hasJumpedSinceGrounded; // has the player jumped since they've been on the ground? (needed bc coyoted time)
+    private const float CapsuleCheckRadiusScale = 0.95f;
+    private const float CapsuleCheckLift = 0.1f;
+    private const float HeightTolerance = 0.01f;
 
 
     // Properties (using the get accessors to recalculate every time it's "read" in Update)
@@ -49,6 +61,10 @@ public class PlayerMotor : MonoBehaviour
     public float TimeSinceLanded { get { return Time.time - _landedTime; } } // tracks when the player landed
     public Vector3 WishDirection { get; private set; } // BASICALLY Where the player is "asking" or "wishes" to go this frame, from 1 to 0 :)
     public bool HasMoveInput { get { return WishDirection.sqrMagnitude > MinimumInputSqrMagnitude; } }
+    public float StandingHeight { get { return _standingHeight; } }
+    public float CurrentHeight { get { return _controller.height; } }
+    public bool IsCrouched { get { return _controller.height < _standingHeight - HeightTolerance; } }
+    public bool WantsToCrouch { get; set; }
     
     // for the abilites to see:
     public PlayerInput InputReader { get { return _inputReader; } }
