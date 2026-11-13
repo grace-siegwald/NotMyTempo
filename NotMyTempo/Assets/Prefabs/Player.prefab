@@ -548,6 +548,8 @@ GameObject:
   - component: {fileID: 2500782928151275912}
   - component: {fileID: 5416657574063369553}
   - component: {fileID: 8305007632489990752}
+  - component: {fileID: 7595124780330760952}
+  - component: {fileID: 6669687807762028997}
   m_Layer: 3
   m_Name: Pistol
   m_TagString: Player
@@ -866,7 +868,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2722618607240351796}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6aaa316d00260b64b8147ba5772d2492, type: 3}
   m_Name: 
@@ -875,6 +877,41 @@ MonoBehaviour:
   altFireAction: {fileID: 0}
   crosshair: {fileID: 6689410397823816527}
   onBeatDamageMultiplier: 2
+--- !u!114 &7595124780330760952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2722618607240351796}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 467aa0c50e781934284b1afd01476702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChargeShotArchetype
+  fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  altFireAction: {fileID: 0}
+  crosshair: {fileID: 0}
+  beatsToFullCharge: 4
+  beatsBeforeFizzle: 2
+  chargedDamageMultiplier: 4
+--- !u!114 &6669687807762028997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2722618607240351796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 324914a89181ea44d8ab0c1af3c962b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrimeShotArchetype
+  fireAction: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  altFireAction: {fileID: -4256756060003506530, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  crosshair: {fileID: 0}
+  primeLifetimeBeats: 4
+  primedDamageMultiplier: 3
 --- !u!1 &4175666968459090660
 GameObject:
   m_ObjectHideFlags: 0
