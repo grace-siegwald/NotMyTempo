@@ -87,7 +87,7 @@ public abstract class FireArchetype : MonoBehaviour
         return Mathf.RoundToInt(Conductor.SongTime / Conductor.SecondsPerBeat);
     }
 
-    protected float BeatsSince(int beat) // returns same thing as above, but 
+    protected float BeatsSince(int beat) // returns same thing as above, but as a float, smoooooth decimal value
     {
         return Conductor.SongTime / Conductor.SecondsPerBeat - beat;
     }
