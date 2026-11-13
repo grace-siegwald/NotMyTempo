@@ -105,31 +105,4 @@ public class Conductor : MonoBehaviour
         music.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         music.release();
     }
-
-    //// Update is called once per frame
-    //void Update()
-    //{
-    //    beatMarker += Time.deltaTime;
-    //    if(beatMarker >= deltaTimeNumber)
-    //    {
-    //        DoBeat();
-    //    }
-    //    else if (beatMarker >= deltaTimeNumber - buffer || beatMarker <= buffer)
-    //    {
-    //        isWithinBuffer = true;
-    //    }
-    //    else
-    //    {
-    //        isWithinBuffer = false;
-    //    }
-    //}
-
-    //void DoBeat()
-    //{
-    //    Debug.Log("Beat");
-
-    //    beatMarker -= deltaTimeNumber;
-
-    //    OnBeat?.Invoke();
-    //}
 }
