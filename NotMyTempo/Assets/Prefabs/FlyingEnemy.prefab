@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4941147897365079820}
   - component: {fileID: 4935133984189520537}
   - component: {fileID: 6415523137140686119}
+  - component: {fileID: 5831472139513067204}
   m_Layer: 0
   m_Name: FlyingEnemy
   m_TagString: Untagged
@@ -129,10 +130,6 @@ MonoBehaviour:
   player: {fileID: 0}
   speed: 3
   heightAbovePlayer: 10
-  health: 30
-  attackRange: 2
-  damage: 10
-  attackCooldown: 1
   walls:
     serializedVersion: 2
     m_Bits: 64
@@ -163,3 +160,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5831472139513067204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958589063984752982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973e57d85842d1e4b8bb07b2ac7dea14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlash
+  flashMaterial: {fileID: 0}
+  flashDuration: 0.08

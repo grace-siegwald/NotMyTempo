@@ -22,8 +22,8 @@ public class RaycastShoot : MonoBehaviour
     private LineRenderer laserLine; // Reference to the LineRenderer component which will display our laserline
     private float nextFire; // Float to store the time the player will be allowed to fire again, after firing
 
+    private WeaponOverheats overheat;
     private Conductor conductor;
-
 
     [SerializeField] private InputActionReference fireAction; // Reference to the Input Action for firing
     [SerializeField] private InputActionReference fireActionSecondary; // Reference to the Input Action for firing non-raycast projectiles
@@ -43,92 +43,74 @@ public class RaycastShoot : MonoBehaviour
         // Get and store a reference to our Camera by searching this GameObject and its parents
         fpsCam = GetComponentInParent<Camera>();
 
+        overheat = GetComponent<WeaponOverheats>();
         conductor = FindAnyObjectByType<Conductor>();
         // Never let the gun hit the player, whatever the Inspector says
         shootableLayers &= ~LayerMask.GetMask("Player");
     }
 
 
-    void Update () 
+    void Update()
     {
-        // Check if the player has pressed the fire button and if enough time has elapsed since they last fired
-        if (fireAction.action.triggered && Time.time > nextFire && !fireActionSecondary.action.triggered) 
+        bool primary = fireAction?.action?.triggered == true;
+        bool secondary = fireActionSecondary?.action?.triggered == true;
+
+        if (primary == secondary || Time.time <= nextFire)
+            return;
+
+        if (overheat != null && !overheat.CanFire)
+            return;
+
+        bool onBeat = conductor != null && conductor.JudgeAction();
+
+        if (overheat != null && !overheat.TryFire(onBeat))
+            return;
+
+        float damage = onBeat ? gunDamage * onBeatDamageMultiplier : gunDamage;
+
+        if (primary)
         {
-            // Judge the shot once, and use that answer for everything below
-            bool onBeat = conductor != null && conductor.JudgeAction();
-            float damage = onBeat ? gunDamage * onBeatDamageMultiplier : gunDamage; // one line if statement to determine damage based on whether the shot was on beat
-
-            // Update the time when our player can fire next
             nextFire = Time.time + fireRate;
+            StartCoroutine(ShotEffect());
 
-            // Start our ShotEffect coroutine to turn our laser line on and off
-            StartCoroutine (ShotEffect());
+            Vector3 rayOrigin = fpsCam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f));
+            laserLine.SetPosition(0, gunEnd.position);
 
-            // Create a vector at the center of our camera's viewport
-            Vector3 rayOrigin = fpsCam.ViewportToWorldPoint (new Vector3(0.5f, 0.5f, 0.0f));
-
-            // Declare a raycast hit to store information about what our raycast has hit
-            RaycastHit hit;
-
-            // Set the start position for our visual effect for our laser to the position of gunEnd
-            laserLine.SetPosition (0, gunEnd.position);
-
-            // Check if our raycast has hit anything
-            if (Physics.Raycast(rayOrigin, fpsCam.transform.forward, out hit, weaponRange,
-                    shootableLayers, QueryTriggerInteraction.Ignore)) // Ignores trigger colliders
+            if (Physics.Raycast(rayOrigin, fpsCam.transform.forward, out RaycastHit hit,
+                    weaponRange, shootableLayers, QueryTriggerInteraction.Ignore))
             {
-                // Set the end position for our laser line 
-                laserLine.SetPosition (1, hit.point);
+                laserLine.SetPosition(1, hit.point);
 
-                // Ask the thing we hit (or its parents) whether it can take damage
                 IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
-
-                // If it can, hurt it
                 if (target != null)
-                {
                     target.TakeDamage(damage);
-                }
 
-                // Check if the object we hit has a rigidbody attached
                 if (hit.rigidbody != null)
-                {
-                    // Add force to the rigidbody we hit, in the direction from which it was hit
-                    hit.rigidbody.AddForce (-hit.normal * hitForce);
-                }
+                    hit.rigidbody.AddForce(-hit.normal * hitForce);
             }
             else
             {
-                // If we did not hit anything, set the end of the line to a position directly in front of the camera at the distance of weaponRange
-                laserLine.SetPosition (1, rayOrigin + (fpsCam.transform.forward * weaponRange));
+                laserLine.SetPosition(1, rayOrigin + fpsCam.transform.forward * weaponRange);
             }
         }
-
-        if (fireActionSecondary.action.triggered && Time.time > nextFire && !fireAction.action.triggered)
+        else
         {
-            ShootProjectile();
+            ShootProjectile(damage);
         }
     }
 
-    private void ShootProjectile()
+    private void ShootProjectile(float damage)
     {
-        // Judge the shot once, and use that answer for everything below
-        bool onBeat = conductor != null && conductor.JudgeAction();
-        float damage = onBeat ? gunDamage * onBeatDamageMultiplier : gunDamage; // one line if statement to determine damage based on whether the shot was on beat
-
-        // Update the time when our player can fire next
         nextFire = Time.time + fireRate;
 
-        // Instantiate the projectile prefab at the gun end position and rotation
-        GameObject projectile = Instantiate(projectilePrefab, gunEnd.position, gunEnd.rotation) as GameObject;
+        GameObject projectile = Instantiate(projectilePrefab, gunEnd.position, gunEnd.rotation);
 
-        // Get the Rigidbody component of the projectile
+        ProjectileShoot projectileShoot = projectile.GetComponent<ProjectileShoot>();
+        projectileShoot.gunDamage = damage;
+        projectileShoot.hitForce = hitForce;
+
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
-
-        projectile.GetComponent<ProjectileShoot>().gunDamage = damage; // Set the damage of the projectile
-        projectile.GetComponent<ProjectileShoot>().hitForce = hitForce; // Set the hit force of the projectile
-
-        // Apply a forward force to the projectile
-        rb.AddForce(gunEnd.forward * ProjectileForce); // Adjust the force value as needed
+        rb.AddForce(gunEnd.forward * ProjectileForce);
     }
 
     private IEnumerator ShotEffect()

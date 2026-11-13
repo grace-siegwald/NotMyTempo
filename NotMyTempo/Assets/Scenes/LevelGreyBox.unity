@@ -73647,6 +73647,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1274715822}
+    - targetCorrespondingSourceObject: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1233860818}
   m_SourcePrefab: {fileID: 100100000, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
 --- !u!43 &703904759
 Mesh:
@@ -107512,6 +107515,34 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1233860811 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2722618607240351796, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+  m_PrefabInstance: {fileID: 668063313}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1233860818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233860811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50acc9a02bb8c7b41807cdac65077082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponOverheats
+  shotsBeforeOverheat: 20
+  onBeatHeatMultiplier: 0.56
+  coolingDelay: 1
+  coolingPerSecond: 0.5
+  ventAction: {fileID: 0}
+  hitsToVent: 3
+  missesBeforeJam: 3
+  needleSpeed: 220
+  targetWidth: 46
+  missDelay: 0.35
+  jamDelay: 1
 --- !u!43 &1255966287
 Mesh:
   m_ObjectHideFlags: 0
