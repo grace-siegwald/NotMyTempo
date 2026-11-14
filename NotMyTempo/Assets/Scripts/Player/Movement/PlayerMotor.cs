@@ -221,7 +221,7 @@ public class PlayerMotor : MonoBehaviour
         SetHeight(Mathf.MoveTowards(currentHeight, targetHeight, _heightChangeSpeed * deltaTime)); // where we actually change the height of the player
     }
     /// <summary> Resizes the capsule. The pivot is at the feet, so the feet stay planted and the head moves.</summary>
-    private void SetHeight(float height)
+    private void SetHeight(float height) // always moves the center too, so the capsules bottom stays as the pivot
     {
         _controller.height = height;
         _controller.center = new Vector3(0f, height * 0.5f, 0f);
