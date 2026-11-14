@@ -832862,6 +832862,10 @@ PrefabInstance:
       propertyPath: _dashAction
       value: 
       objectReference: {fileID: 2123350996040546270, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    - target: {fileID: 191362783637291580, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: _mouseSensitivity
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 /// <summary>
 /// Handles all the velocity stuff and moves the CharacterController (hence "motor"). Also manages running and gravity!
@@ -47,9 +48,9 @@ public class PlayerMotor : MonoBehaviour
     private float _landedTime = float.NegativeInfinity;
     private int _airJumpsUsed; // number of air jumps that have been used by the player
     private bool _hasJumpedSinceGrounded; // has the player jumped since they've been on the ground? (needed bc coyoted time)
-    private const float CapsuleCheckRadiusScale = 0.95f;
-    private const float CapsuleCheckLift = 0.1f;
-    private const float HeightTolerance = 0.01f;
+    private const float CapsuleCheckRadiusScale = 0.95f; // used for checking radius 
+    private const float CapsuleCheckLift = 0.1f; // used for checking lift of capsule
+    private const float HeightTolerance = 0.01f; 
 
 
     // Properties (using the get accessors to recalculate every time it's "read" in Update)
@@ -64,8 +65,9 @@ public class PlayerMotor : MonoBehaviour
     public float StandingHeight { get { return _standingHeight; } }
     public float CurrentHeight { get { return _controller.height; } }
     public bool IsCrouched { get { return _controller.height < _standingHeight - HeightTolerance; } }
-    public bool WantsToCrouch { get; set; }
+    public bool WantsToCrouch { get; set; } // set by abilities like "slide"
     
+
     // for the abilites to see:
     public PlayerInput InputReader { get { return _inputReader; } }
     public MovementStats Stats { get { return _stats; } }
@@ -89,6 +91,8 @@ public class PlayerMotor : MonoBehaviour
             return;
         }
 
+        SetHeight(_standingHeight); // set the height of the player off rip
+
         // setup the abilities on the player, gets all the children of the base class MovementAbility
         foreach (MovementAbility ability in GetComponents<MovementAbility>())
         {
@@ -107,6 +111,7 @@ public class PlayerMotor : MonoBehaviour
         
         // CHECK THE WORLD
         UpdateGrounded();
+        UpdateHeight(deltaTime);
         WishDirection = CalculateWishDirection();
 
         // CHANGE  THE VELOCITY (two possible owners, defualt or ability)
@@ -173,7 +178,7 @@ public class PlayerMotor : MonoBehaviour
         ability.Deactivate();
     }
 
-    // ground/air movement
+    // ground/air movement 
     private void UpdateDefaultMovement(float deltaTime)
     {
         if (IsGrounded)
@@ -188,7 +193,56 @@ public class PlayerMotor : MonoBehaviour
         }
         TryJump();
     }
-    
+    // height logic
+    private void UpdateHeight(float deltaTime)
+    {
+        float targetHeight; // empty target height
+        if (WantsToCrouch) // if we want to crouch, assign target height to crouch height
+        {
+            targetHeight = _crouchHeight; 
+        }
+        else // else (standing), assign target height to standing height
+        {
+            targetHeight = _standingHeight; 
+        }
+
+        float currentHeight = _controller.height; // store current height of character
+        if (Mathf.Approximately(currentHeight, targetHeight)) // if we're currently at the target height, get outa here
+        {
+            return;
+        }
+
+        bool isStandingUp = targetHeight > currentHeight;
+        bool isBlockedOverhead = isStandingUp && !IsCapsuleFree(transform.position, targetHeight);
+        if (isBlockedOverhead) // if we're blocked overhead, get outa here
+        {
+            return;
+        }
+        SetHeight(Mathf.MoveTowards(currentHeight, targetHeight, _heightChangeSpeed * deltaTime)); // where we actually change the height of the player
+    }
+    /// <summary> Resizes the capsule. The pivot is at the feet, so the feet stay planted and the head moves.</summary>
+    private void SetHeight(float height)
+    {
+        _controller.height = height;
+        _controller.center = new Vector3(0f, height * 0.5f, 0f);
+    }
+    /// <summary> Would a capsule of this height fit with its feet at this position? Ignores the player's own collider. </summary>
+    public bool IsCapsuleFree(Vector3 feetPosition, float height) // complicated check that I don't completely understand yet
+    {
+        float radius = _controller.radius * CapsuleCheckRadiusScale;
+        Vector3 bottomSphereCenter = feetPosition + Vector3.up * (radius + CapsuleCheckLift);
+        Vector3 topSphereCenter = feetPosition + Vector3.up * Mathf.Max(height - radius, radius + CapsuleCheckLift);
+        Collider[] overlaps = Physics.OverlapCapsule(bottomSphereCenter, topSphereCenter, radius, _groundMask, QueryTriggerInteraction.Ignore);
+
+        foreach (Collider overlap in overlaps)
+        {
+            if (overlap != _controller)
+                {
+                    return false;
+                }
+        }
+        return true;
+    }
     // DO THE THINGS
     private void TryJump()
     {
