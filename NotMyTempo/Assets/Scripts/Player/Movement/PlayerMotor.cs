@@ -335,6 +335,7 @@ public class PlayerMotor : MonoBehaviour
     {
         Vector3 horizontalVelocity = HorizontalVelocity;
         float maxSpeed = _stats.GroundSpeed;
+        if (IsCrouched) { maxSpeed *= _stats.CrouchSpeedMultiplier; }
         Vector3 targetVelocity = WishDirection * maxSpeed; // velocity is almost always direction * speed, vector maths baby
         
         float rate;

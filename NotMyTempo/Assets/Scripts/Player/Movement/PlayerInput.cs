@@ -19,7 +19,9 @@ public class PlayerInput : MonoBehaviour
     [Tooltip("\"Player/Jump\" from the InputSystem_Actions thing")]
     [SerializeField] private InputActionReference _jumpAction; // "Player/Jump" from the InputSystem_Actions thing
     [Tooltip("Player/Dash from the InputSystem_Actions thing")]
-    [SerializeField] private InputActionReference _dashAction; 
+    [SerializeField] private InputActionReference _dashAction;
+    [Tooltip("Player/Crouch from the InputSystem_Actions thing. Held to slide or crouch.")]
+    [SerializeField] private InputActionReference _slideAction;
 
     // Look
     [Header("Look")]
@@ -46,6 +48,7 @@ public class PlayerInput : MonoBehaviour
     public Vector2 LookDelta { get; private set; }
     public bool HasBufferedJump { get { return IsWithinBuffer(_jumpPressedTime); } }
     public bool HasBufferedDash { get { return IsWithinBuffer(_dashPressedTime); }  }
+    public bool IsSlideHeld { get { return _slideAction.action.IsPressed(); } } // returns true if slide is being held 
 
     public void ConsumeJump()
     {
@@ -63,6 +66,7 @@ public class PlayerInput : MonoBehaviour
         _lookAction.action.Enable();
         _jumpAction.action.Enable();
         _dashAction.action.Enable();
+        _slideAction.action.Enable();
     }
 
     private void Update()

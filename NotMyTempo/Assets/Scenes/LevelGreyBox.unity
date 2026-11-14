@@ -289406,6 +289406,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 191362783637291580, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      propertyPath: _slideAction
+      value: 
+      objectReference: {fileID: 7040659881675835329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     - target: {fileID: 4632456424815869919, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -289453,8 +289457,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 848328869}
   m_SourcePrefab: {fileID: 100100000, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+--- !u!1 &668063314 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9204545892706032398, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
+  m_PrefabInstance: {fileID: 668063313}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &670893151
 GameObject:
   m_ObjectHideFlags: 0
@@ -387195,12 +387207,26 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5898614285976194355, guid: fbcba9f3c04374145a63ed923a36b021, type: 3}
   m_PrefabInstance: {fileID: 668063313}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 668063314}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e36f43663f7eff48b5f984e64d1f6fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+--- !u!114 &848328869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668063314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c0f5c6ac9e01e947b956c532e1a4255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlideAbility
+  _startSpeedMargin: 2
+  _airborneGraceTime: 0.15
 --- !u!43 &848898387
 Mesh:
   m_ObjectHideFlags: 0

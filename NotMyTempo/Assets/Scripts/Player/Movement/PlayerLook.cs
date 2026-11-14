@@ -8,14 +8,17 @@ using UnityEngine.InputSystem;
 /// </summary>
 
 [DefaultExecutionOrder(-50)] // execute this scripts Update after the player input is read :)
-[RequireComponent(typeof(PlayerInput))] // got auto recomended for me, this makes sense tho! 
+[RequireComponent(typeof(PlayerInput), typeof(PlayerMotor))] // got auto recomended for me, this makes sense tho! 
 public class PlayerLook : MonoBehaviour
 {
     [Tooltip("The location of the camera on the player's body")]
     [SerializeField] private Transform _cameraRoot; // the location of the camera on the player's body 
     [Tooltip("How far up and down you can look")]
     [SerializeField] private float _maxPitch = 89f; // how far up and down you can look
+    [Tooltip("Eyes sit this far below the top of the capsule, m.")]
+    [SerializeField] private float _eyeOffsetFromTop = 0.15f;
 
+    private PlayerMotor _motor;
     private PlayerInput _inputReader;
     private float _yaw;
     private float _pitch;
@@ -36,6 +39,7 @@ public class PlayerLook : MonoBehaviour
     private void Awake() // runs as soon as the objects exists in the scene
     {
         _inputReader = GetComponent<PlayerInput>();
+        _motor = GetComponent<PlayerMotor>();
         _yaw = transform.eulerAngles.y;
     }
     private void OnEnable()
@@ -64,6 +68,11 @@ public class PlayerLook : MonoBehaviour
         // assigns the rotation values (yaw and pitch), I HAVE NO IDEA HOW QUATERNIONS WORKKKKKK
         transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
         _cameraRoot.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
+    }
+    private void LateUpdate() 
+    {
+        float eyeHeight = _motor.CurrentHeight - _eyeOffsetFromTop;
+        _cameraRoot.localPosition = new Vector3(0f, eyeHeight, 0f);
     }
 
 
