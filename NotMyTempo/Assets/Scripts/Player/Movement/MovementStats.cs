@@ -21,6 +21,8 @@ public class MovementStats : ScriptableObject
     [SerializeField] private float _overspeedDeceleration = 20f;
     [Tooltip("Seconds after landing before extra speed starts bleeding off. Jump inside this window to keep all of it")]
     [SerializeField] private float _landingGraceTime = 0.12f;
+    [Tooltip("Top speed multiplier while crouched.")]
+    [SerializeField] private float _crouchSpeedMultiplier = 0.5f;
 
     // Air Stuff
     [Header("Air")]
@@ -57,6 +59,17 @@ public class MovementStats : ScriptableObject
     [Tooltip("Lowest speed you leave a dash with, m/s. You never leave slower than you entered")]
     [SerializeField] private float _dashExitSpeed = 14f;
 
+    // Slide Stuff
+    [Header("Slide")]
+    [Tooltip("A slide starts at least this much faster than your run speed, m/s.")]
+    [SerializeField] private float _slideBoost = 5f;
+    [Tooltip("Slowdown while sliding on flat ground, m/s². Must be lower than a ramp's push for ramps to speed you up.")]
+    [SerializeField] private float _slideFriction = 5f;
+    [Tooltip("The slide ends below this speed, m/s.")]
+    [SerializeField] private float _slideMinimumSpeed = 5f;
+    [Tooltip("How fast you can steer a slide, degrees per second.")]
+    [SerializeField] private float _slideSteering = 60f;
+
 
     // Public Properties (read only, cannot be changed by other scripts)
     // -- Ground --
@@ -65,6 +78,7 @@ public class MovementStats : ScriptableObject
     public float GroundDeceleration => _groundDeceleration;
     public float OverspeedDeceleration => _overspeedDeceleration;
     public float LandingGraceTime => _landingGraceTime;
+    public float CrouchSpeedMultiplier => _crouchSpeedMultiplier;
     // -- Air --
     public float Gravity => _gravity;
     public float FallGravityMultiplier => _fallGravityMultiplier;
@@ -81,4 +95,9 @@ public class MovementStats : ScriptableObject
     public int DashCharges => _dashCharges;
     public float DashRechargeTime => _dashRechargeTime;
     public float DashExitSpeed => _dashExitSpeed;
+    // -- Slide -- 
+    public float SlideBoost  => _slideBoost;
+    public float SlideFriction => _slideFriction;
+    public float SlideMinimumSpeed => _slideMinimumSpeed;
+    public float SlideSteering => _slideSteering;
 }
