@@ -76,12 +76,15 @@ public class DashAbility : MovementAbility
     }
     protected override void OnDeactivated()
     {
+        float exitSpeed; 
         if (_wasJumpCancelled)
         {
-            return;
+            exitSpeed = Mathf.Max(_entrySpeed, Stats.DashJumpSpeed);
         }
-
-        float exitSpeed = Mathf.Max(_entrySpeed, Stats.DashExitSpeed);
-        Motor.Velocity = _dashDirection * exitSpeed;
+        else
+        {
+            exitSpeed = Mathf.Max(_entrySpeed, Stats.DashExitSpeed);
+        }
+        Motor.SetHorizontalVelocity(_dashDirection * exitSpeed);
     }
 }

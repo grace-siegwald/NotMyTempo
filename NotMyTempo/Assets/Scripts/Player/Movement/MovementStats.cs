@@ -58,6 +58,8 @@ public class MovementStats : ScriptableObject
     [SerializeField] private float _dashRechargeTime = 1f;
     [Tooltip("Lowest speed you leave a dash with, m/s. You never leave slower than you entered")]
     [SerializeField] private float _dashExitSpeed = 14f;
+    [Tooltip("Horizontal speed a dash-jump lanches, m/s. faster than running, slower than the dash itself")]
+    [SerializeField] private float _dashJumpSpeed = 16f;
 
     // Slide Stuff
     [Header("Slide")]
@@ -104,6 +106,7 @@ public class MovementStats : ScriptableObject
     public int DashCharges => _dashCharges;
     public float DashRechargeTime => _dashRechargeTime;
     public float DashExitSpeed => _dashExitSpeed;
+    public float DashJumpSpeed => _dashJumpSpeed;
     // -- Slide -- 
     public float SlideBoost  => _slideBoost;
     public float SlideFriction => _slideFriction;
