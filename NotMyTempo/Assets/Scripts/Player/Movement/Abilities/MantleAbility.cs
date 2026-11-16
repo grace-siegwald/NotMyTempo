@@ -26,6 +26,8 @@ public class MantleAbility : MovementAbility
     [SerializeField] private float _cooldown = 0.25f;
     [Tooltip("Heights above the feet where we look for a wall (the origins of the rays checking for mantle ledges), m.")]
     [SerializeField] private float[] _wallProbeHeights = { 0.3f, 0.9f, 1.5f };
+    [Tooltip("Shortest a mantle can take, seconds, even when you arrive very fast")]
+    [SerializeField] private float _shortestDuration = 0.12f;
 
     // -- Constants --
     private const int mantlePriority = 40; // highest priority off any ability
@@ -33,14 +35,12 @@ public class MantleAbility : MovementAbility
     private const float ledgeProbeInset = 0.1f;
     private const float ledgeProbeClearance = 0.1f;
     private const float landingLift = 0.02f;
-    private const float minimumDuration = 0.01f;
-    private const float risePortion = 0.6f;
-    private const float moveOverStart = 0.35f;
 
     private Vector3 _startPosition;
     private Vector3 _targetPosition;
     private Vector3 _exitDirection;
     private float _progress; // how far into the mantle arc the player is
+    private float _duration;
     private float _exitSpeed;
     private float _lastEndTime = float.NegativeInfinity; // negative infinity is better than zero in Unity for some reason
 
@@ -61,17 +61,16 @@ public class MantleAbility : MovementAbility
             return false;
         }
 
-        _exitDirection = direction;
         return true;
     }
 
     // -- Methods --
     public override void UpdateActive(float deltaTime)
     {
-        _progress = Mathf.Min(1f, _progress + deltaTime / Mathf.Max(minimumDuration, Stats.MantleDuration)); // tells us where we are in the mantle arc
+        _progress = Mathf.Min(1f, _progress + deltaTime / _duration);
 
-        float riseAmount = 1f - Mathf.Pow(1f - Mathf.Clamp01(_progress / risePortion), 2f); // why is this squared? not sure yet, research 
-        float moveOverAmount = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((_progress - moveOverStart) / (1f - moveOverStart))); // idk man
+        float riseAmount = 1f - Mathf.Pow(1f - _progress, 3f); // fast at first, gentle at the top 
+        float moveOverAmount = _progress * _progress; // gentle at first, full speed at the end (ease in)
 
         Vector3 position = Vector3.Lerp(_startPosition, _targetPosition, moveOverAmount); // lerp the start and target position over "moveOverAmount" time, smoothhh
         position.y = Mathf.Lerp(_startPosition.y, _targetPosition.y, riseAmount); // same thing for y position
@@ -88,7 +87,18 @@ public class MantleAbility : MovementAbility
     {
         _startPosition = Motor.transform.position;
         _progress = 0f; // set progress to zero at activation
-        _exitSpeed = Mathf.Max(Motor.HorizontalSpeed, Stats.MantleExitSpeed); // exit speed is either the current hori speed or the hard set mantle exit speed
+
+        Vector3 toTarget = _targetPosition - _startPosition;
+        toTarget.y = 0f;
+        float horiDistance = toTarget.magnitude;
+        _exitDirection = toTarget.normalized;
+
+        // An ease-in curve ends at twice its average speed, so this duration makes it
+        // finish at exactly the speed we hand back to the motor.
+        float desiredExitSpeed = Mathf.Max(Motor.HorizontalSpeed, Stats.MantleExitSpeed);
+        _duration = Mathf.Clamp(2f * horiDistance / desiredExitSpeed, _shortestDuration, Stats.MantleDuration);
+        _exitSpeed = 2f * horiDistance / _duration;
+
         Motor.Velocity = Vector3.zero;
         Motor.Controller.enabled = false; // get the character controller outa here when we start this, not using this
     }
