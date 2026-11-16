@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MovementStats
   _groundSpeed: 10
   _groundAcceleration: 100
-  _groundDeceleration: 200
-  _overspeedDeceleration: 70
+  _groundDeceleration: 100
+  _overspeedDeceleration: 35
   _landingGraceTime: 0.12
   _crouchSpeedMultiplier: 0.5
   _gravity: 30
@@ -31,6 +31,7 @@ MonoBehaviour:
   _dashCharges: 3
   _dashRechargeTime: 1
   _dashExitSpeed: 14
+  _dashJumpSpeed: 16
   _slideBoost: 5
   _slideFriction: 5
   _slideMinimumSpeed: 5
