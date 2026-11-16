@@ -70,6 +70,15 @@ public class MovementStats : ScriptableObject
     [Tooltip("How fast you can steer a slide, degrees per second.")]
     [SerializeField] private float _slideSteering = 60f;
 
+    // Mantle Stuff
+    [Header("Mantle")]
+    [Tooltip("Tallest ledge you can mantle, measured from your feet, m.")]
+    [SerializeField] private float _mantleMaxHeight = 2f;
+    [Tooltip("How long a mantle takes, seconds.")]
+    [SerializeField] private float _mantleDuration = 0.22f;
+    [Tooltip("Lowest speed you leave a mantle with, m/s.")]
+    [SerializeField] private float _mantleExitSpeed = 10f;
+
 
     // Public Properties (read only, cannot be changed by other scripts)
     // -- Ground --
@@ -100,4 +109,8 @@ public class MovementStats : ScriptableObject
     public float SlideFriction => _slideFriction;
     public float SlideMinimumSpeed => _slideMinimumSpeed;
     public float SlideSteering => _slideSteering;
+    // -- Mantle --
+    public float MantleMaxHeight => _mantleMaxHeight;
+    public float MantleDuration => _mantleDuration;
+    public float MantleExitSpeed => _mantleExitSpeed;
 }

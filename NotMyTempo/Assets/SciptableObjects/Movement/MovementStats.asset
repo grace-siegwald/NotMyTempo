@@ -17,6 +17,7 @@ MonoBehaviour:
   _groundDeceleration: 80
   _overspeedDeceleration: 20
   _landingGraceTime: 0.12
+  _crouchSpeedMultiplier: 0.5
   _gravity: 30
   _fallGravityMultiplier: 1.4
   _maxFallSpeed: 50
@@ -30,3 +31,10 @@ MonoBehaviour:
   _dashCharges: 3
   _dashRechargeTime: 1
   _dashExitSpeed: 14
+  _slideBoost: 5
+  _slideFriction: 5
+  _slideMinimumSpeed: 5
+  _slideSteering: 60
+  _mantleMaxHeight: 2
+  _mantleDuration: 0.3
+  _mantleExitSpeed: 10
