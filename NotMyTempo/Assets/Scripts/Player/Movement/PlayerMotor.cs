@@ -11,7 +11,6 @@ using Unity.Mathematics;
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))] // requires character controller and input reader
 public class PlayerMotor : MonoBehaviour
 {
-    
     [Tooltip("All movement tuning. Create one with Assets > Create > Not My Tempo > Movement Stats.")]
     [SerializeField] private MovementStats _stats; // getting stat assest
 
@@ -73,6 +72,8 @@ public class PlayerMotor : MonoBehaviour
     public MovementStats Stats { get { return _stats; } }
     // reference to the active ability: the ability currently in control of the velocity (null if doing defualt movement)
     public MovementAbility ActiveAbility { get; private set; }
+    public CharacterController Controller { get { return _controller; } }
+    public LayerMask GroundMask { get { return _groundMask; } }
     public Vector3 Velocity
     {
         get { return _velocity; }
@@ -408,7 +409,8 @@ public class PlayerMotor : MonoBehaviour
         bool isWalkable = didHitGround && Vector3.Angle(groundHit.normal, Vector3.up) <= _controller.slopeLimit; // new stuff, not fully understood
         bool isRising = _velocity.y > RisingSpeedThreshold; // needed because probe would read grounded *close* to the ground when it shouldn't
 
-        IsGrounded = !isRising && (isWalkable || _controller.isGrounded);
+        bool isControllerGrounded = _controller.enabled && _controller.isGrounded;
+        IsGrounded = !isRising && (isWalkable || isControllerGrounded);
         if (isWalkable)
         {
             GroundNormal = groundHit.normal;
