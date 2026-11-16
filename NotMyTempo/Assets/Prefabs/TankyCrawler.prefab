@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 3034532724300475327}
   - component: {fileID: 7004054875526315312}
   m_Layer: 7
-  m_Name: Tanky Enemy
+  m_Name: TankyCrawler
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -490,20 +490,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 4499468110147474402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23777571b84cf2840a77bed6916940a9, type: 3}
+  m_Script: {fileID: 11500000, guid: da45d2115bdecfa4a90a0ad608c91d5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAi
-  maxClimbHeight: 2.2
-  climbReach: 2.2
-  climbSpeed: 4
-  player: {fileID: 0}
-  health: 300
-  attackRange: 1.8
-  damage: 10
-  attackCooldown: 20
-  walls:
+  _maxHealth: 50
+  _attackDamage: 10
+  _attackRange: 1.8
+  _attackCooldown: 1.2
+  _walls:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
+  _canClimb: 1
+  _maxClimbHeight: 2.2
+  _climbReach: 2.2
+  _climbSpeed: 4
 --- !u!114 &7004054875526315312
 MonoBehaviour:
   m_ObjectHideFlags: 0

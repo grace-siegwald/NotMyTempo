@@ -1,216 +1,154 @@
-using System;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine.Serialization;
 
-[RequireComponent(typeof(NavMeshAgent))]
-public class EnemyAi : MonoBehaviour, IDamageable
+/// <summary>
+/// Shared base for every enemy type. Handles health, getting hit, dying,
+/// finding the player, line of sight and attack cooldowns.
+/// Each enemy type inherits from this and fills in how it moves (UpdateBehavior)
+/// and what its attack does (PerformAttack).
+/// </summary>
+public abstract class EnemyAi : MonoBehaviour, IDamageable
 {
-    [Header("Climbing")]
-    [Min(0f)] public float maxClimbHeight = 2.2f;
-    [Min(0f)] public float climbReach = 2.2f;
-    [Min(0.1f)] public float climbSpeed = 4f;
+    // FormerlySerializedAs lets Unity read the values already saved in the prefabs
+    // under the old names, so nothing has to be re-entered by hand.
+    [Header("Stats")]
+    [Tooltip("How much damage this enemy can take before dying")]
+    [FormerlySerializedAs("health")]
+    [SerializeField] protected float _maxHealth = 50f;
 
-    private bool isClimbing;
-    private Vector3 climbLift;
-    private Vector3 climbAcross;
-    private Vector3 climbLanding;
+    [Tooltip("Damage dealt to the player by one attack")]
+    [FormerlySerializedAs("damage")]
+    [SerializeField] protected float _attackDamage = 10f;
 
-    public PlayerHealth player;
-    public virtual float health { get; set; } = 50f;
-    public virtual float attackRange { get; set; } = 1.8f;
-    public virtual float damage { get; set; } = 10f;
-    public virtual float attackCooldown { get; set; } = 1.2f;
+    [Tooltip("How close the player has to be before this enemy attacks, in meters")]
+    [FormerlySerializedAs("attackRange")]
+    [SerializeField] protected float _attackRange = 1.8f;
 
-    public LayerMask walls;
+    [Tooltip("Seconds between attacks")]
+    [FormerlySerializedAs("attackCooldown")]
+    [Min(0.1f)]
+    [SerializeField] protected float _attackCooldown = 1.2f;
 
-    private NavMeshAgent agent;
-    private float nextAttack;
-    private float nextUpdate;
-    private HitFlash hitFlash;
+    [Header("World")]
+    [Tooltip("Layers that block movement and line of sight (walls, floors, props)")]
+    [FormerlySerializedAs("walls")]
+    [SerializeField] protected LayerMask _walls;
 
-    void Awake()
+    private const float DestroyDelay = 0.08f; // long enough for the hit flash to show
+
+    private HitFlash _hitFlash;
+    private float _nextAttackTime;
+
+    /// <summary>The player this enemy is after. The spawner sets it; otherwise it's found in Awake.</summary>
+    public PlayerHealth Player { get; set; }
+    public float CurrentHealth { get; private set; }
+    public bool IsDead { get; private set; }
+
+    /// <summary>How high above the pivot this enemy "looks" from for line of sight checks.</summary>
+    protected virtual float EyeHeight => 1f;
+    protected bool IsAttackReady => Time.time >= _nextAttackTime;
+
+    protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        hitFlash = GetComponent<HitFlash>();
-        agent.stoppingDistance = attackRange * 0.8f;
+        CurrentHealth = _maxHealth;
+        _hitFlash = GetComponent<HitFlash>();
 
-     
-        nextUpdate = Time.time + UnityEngine.Random.Range(0f, 0.25f);
-        if (player == null) { player = FindFirstObjectByType<PlayerHealth>(); }
-    }
-
-    void Update()
-    {
-        if (!agent.enabled || !agent.isOnNavMesh)
-            return;
-        if (isClimbing)
+        if (Player == null)
         {
-            UpdateClimb();
-            return;
-        }
-        if (player == null || player.IsDead)
-        {
-            agent.isStopped = true;
-            return;
-        }
-
-        if (Time.time < nextUpdate)
-            return;
-
-        nextUpdate = Time.time + 0.25f;
-
-        float distance = Vector3.Distance(transform.position,
-                                          player.transform.position);
-
-        bool wallInWay = Physics.Linecast(
-            transform.position + Vector3.up,
-            player.transform.position + Vector3.up,
-            walls, QueryTriggerInteraction.Ignore);
-
-        if (distance <= attackRange && !wallInWay)
-        {
-            agent.isStopped = true;
-            Attack();
-        }
-        else if (!TryStartClimb())
-        {
-            agent.isStopped = false;
-            agent.SetDestination(player.transform.position);
+            Player = FindFirstObjectByType<PlayerHealth>();
         }
     }
 
-    bool TryStartClimb()
+    private void Update()
     {
-        if (maxClimbHeight <= 0f || climbReach <= 0f ||
-            !agent.updatePosition || agent.isOnOffMeshLink)
-            return false;
+        if (IsDead)
+            return;
 
-        const float clearance = 0.1f;
-        Vector3 feet = transform.position - Vector3.up * agent.baseOffset;
-        Vector3 direction = player.transform.position - feet;
-        direction.y = 0f;
-
-        float distanceToPlayer = direction.magnitude;
-        if (distanceToPlayer < 0.01f)
-            return false;
-
-        direction /= distanceToPlayer;
-
-        if (!Physics.Raycast(feet + Vector3.up * 0.15f, direction,
-            out RaycastHit wallHit, Mathf.Min(climbReach, distanceToPlayer),
-            walls, QueryTriggerInteraction.Ignore))
-            return false;
-
-       
-        Vector3 topProbe = wallHit.point + direction * (agent.radius + 0.2f);
-        topProbe.y = feet.y + maxClimbHeight + clearance;
-
-        if (!Physics.Raycast(topProbe, Vector3.down, out RaycastHit topHit,
-            maxClimbHeight, walls, QueryTriggerInteraction.Ignore) ||
-            topHit.collider != wallHit.collider || topHit.normal.y < 0.7f)
-            return false;
-
-        var filter = new NavMeshQueryFilter
+        bool hasLivingTarget = Player != null && !Player.IsDead;
+        if (hasLivingTarget)
         {
-            agentTypeID = agent.agentTypeID,
-            areaMask = agent.areaMask
-        };
+            UpdateBehavior();
+        }
+        else
+        {
+            UpdateWithoutTarget();
+        }
+    }
 
-        if (!NavMesh.SamplePosition(topHit.point, out NavMeshHit landing, 0.2f, filter) ||
-            Mathf.Abs(landing.position.y - topHit.point.y) > clearance)
+    /// <summary>Runs every frame while the player is alive. Move, aim and call TryAttack here.</summary>
+    protected abstract void UpdateBehavior();
+
+    /// <summary>What happens to the enemy's attack once TryAttack decides it's allowed.</summary>
+    protected abstract void PerformAttack();
+
+    /// <summary>Runs every frame while there's no living player. Does nothing unless a child overrides it.</summary>
+    protected virtual void UpdateWithoutTarget()
+    {
+    }
+
+    /// <summary>Attacks if the cooldown has finished. Returns true if it attacked.</summary>
+    protected bool TryAttack()
+    {
+        if (!IsAttackReady)
             return false;
 
-        Vector3 raisedFeet = feet;
-        raisedFeet.y = Mathf.Max(topHit.point.y, landing.position.y) + clearance;
-
-        Vector3 acrossFeet = landing.position;
-        acrossFeet.y = raisedFeet.y;
-
-        if (!HasClimbClearance(feet, raisedFeet) ||
-            !HasClimbClearance(raisedFeet, acrossFeet) ||
-            !HasClimbClearance(acrossFeet, landing.position))
-            return false;
-
-        Vector3 pivotOffset = Vector3.up * agent.baseOffset;
-        climbLift = raisedFeet + pivotOffset;
-        climbAcross = acrossFeet + pivotOffset;
-        climbLanding = landing.position;
-
-        agent.isStopped = true;
-        agent.updatePosition = false;
-        isClimbing = true;
+        PerformAttack();
+        _nextAttackTime = Time.time + _attackCooldown;
         return true;
     }
 
-    bool HasClimbClearance(Vector3 from, Vector3 to)
+    protected float DistanceToPlayer()
     {
-        float radius = Mathf.Min(agent.radius, agent.height * 0.5f);
-        Vector3 bottom = from + Vector3.up * (radius + 0.05f);
-        Vector3 top = bottom + Vector3.up * (agent.height - 2f * radius);
-        Vector3 movement = to - from;
-
-        if (Physics.CheckCapsule(bottom + movement, top + movement, radius,
-            walls, QueryTriggerInteraction.Ignore))
-            return false;
-
-        return movement.sqrMagnitude < 0.0001f ||
-            !Physics.CapsuleCast(bottom, top, radius, movement.normalized,
-                movement.magnitude, walls, QueryTriggerInteraction.Ignore);
+        return Vector3.Distance(transform.position, Player.transform.position);
     }
 
-    void UpdateClimb()
+    /// <summary>True if no wall is between this enemy's eyes and the player's chest.</summary>
+    protected bool HasLineOfSightToPlayer()
     {
-        Vector3 target = transform.position.y < climbLift.y ? climbLift : climbAcross;
-        transform.position = Vector3.MoveTowards(
-            transform.position, target, climbSpeed * Time.deltaTime);
-
-        if (transform.position != climbAcross)
-            return;
-
-        bool landed = agent.Warp(climbLanding);
-        agent.updatePosition = true;
-        isClimbing = false;
-
-        if (landed)
-            agent.ResetPath();
-
-        nextUpdate = Time.time + 0.25f;
+        Vector3 eyes = transform.position + Vector3.up * EyeHeight;
+        Vector3 playerChest = Player.transform.position + Vector3.up;
+        return !Physics.Linecast(eyes, playerChest, _walls, QueryTriggerInteraction.Ignore);
     }
 
-    void OnDisable()
+    public virtual void TakeDamage(float amount)
     {
-        if (!isClimbing)
+        if (IsDead || amount <= 0f)
             return;
 
-        agent.updatePosition = true;
-        isClimbing = false;
-    }
+        CurrentHealth -= amount;
 
-    void Attack()
-    {
-        if (Time.time < nextAttack)
-            return;
-
-        player.TakeDamage(damage);
-        nextAttack = Time.time + Mathf.Max(0.1f, attackCooldown);
-    }
-
-    public void TakeDamage(float amount)
-    {
-        if (amount <= 0f || health <= 0f) 
-            return;
-
-        health -= amount;
-
-        if (hitFlash != null) 
-            hitFlash.Flash();
-
-        if (health <= 0f)
+        if (_hitFlash != null)
         {
-            EnemyEvents.ReportKill(gameObject); 
-            agent.enabled = false;
-            GetComponent<Collider>().enabled = false;
-            Destroy(gameObject, 0.08f); 
+            _hitFlash.Flash();
         }
+
+        if (CurrentHealth <= 0f)
+        {
+            Die();
+        }
+    }
+
+    /// <summary>
+    /// Kills this enemy. Pass countAsKill = false when the enemy removes itself
+    /// (like a Roomba blowing up on the player) so it doesn't count toward the player's kills.
+    /// </summary>
+    protected virtual void Die(bool countAsKill = true)
+    {
+        if (IsDead)
+            return;
+
+        IsDead = true;
+
+        if (countAsKill)
+        {
+            EnemyEvents.ReportKill(gameObject);
+        }
+
+        foreach (Collider bodyCollider in GetComponentsInChildren<Collider>())
+        {
+            bodyCollider.enabled = false;
+        }
+
+        Destroy(gameObject, DestroyDelay);
     }
 }
