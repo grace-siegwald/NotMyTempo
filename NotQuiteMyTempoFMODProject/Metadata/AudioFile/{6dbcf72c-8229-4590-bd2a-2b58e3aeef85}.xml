@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{6dbcf72c-8229-4590-bd2a-2b58e3aeef85}">
+		<property name="assetPath">
+			<value>Plasma Pistol hit 2.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>0.80258333333333332</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{1c86a496-45e8-4a7c-bdcd-5a6e724734d8}</destination>
+		</relationship>
+	</object>
+</objects>
