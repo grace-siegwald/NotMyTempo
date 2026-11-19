@@ -1,20 +1,34 @@
+using System;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 /// <summary>
-/// Keeps ground enemies coming. Every few seconds it spawns one at a random
-/// spawn point (snapped onto the NavMesh), as long as fewer than the max are alive.
+/// Keeps enemies coming. Every few seconds it spawns one at a random spawn point,
+/// as long as fewer than the max are alive. Picks which enemy type to spawn
+/// by weight. Ground enemies are snapped onto the NavMesh; flying enemies
+/// appear above the spawn point.
 /// </summary>
 public class EnemySpawner : MonoBehaviour
 {
+    /// <summary>One enemy type the spawner can pick, and how often.</summary>
+    [Serializable]
+    public class SpawnOption
+    {
+        [Tooltip("An enemy prefab from the Project window")]
+        public EnemyAi Prefab;
+
+        [Tooltip("How often this one is picked compared to the others. 3 = three times as often as 1")]
+        [Min(0f)]
+        public float Weight = 1f;
+    }
+
     [Header("What to spawn")]
-    [Tooltip("The Enemy prefab from the Project window (needs EnemyAi + NavMeshAgent)")]
-    [SerializeField] private EnemyAi enemyPrefab;
+    [Tooltip("Every enemy type this spawner can make")]
+    [SerializeField] private SpawnOption[] _spawnOptions;
 
-
-    [Tooltip("Where ground enemies can appear")]
+    [Tooltip("Where enemies can appear")]
     [SerializeField] private Transform[] spawnPoints;
 
     [Header("Pacing")]
@@ -43,6 +57,8 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float minDistanceFromPlayer = 10f;
     [Tooltip("How far from a spawn point to look for the NavMesh, in meters")]
     [SerializeField] private float navMeshSearchRadius = 3f;
+    [Tooltip("How high above the spawn point flying enemies appear, in meters")]
+    [SerializeField] private float _flyingSpawnHeight = 4f;
 
     private readonly List<EnemyAi> alive = new List<EnemyAi>();
     private readonly List<Transform> candidates = new List<Transform>();
@@ -52,15 +68,15 @@ public class EnemySpawner : MonoBehaviour
     private float startTime;
 
     public int AliveCount => alive.Count; // the HUD can read this later
-    public int Stage {  get; private set; } // the threshold that's crossed to incease difficulty
+    public int Stage { get; private set; } // the threshold that's crossed to increase difficulty
     public float CurrentSpawnInterval => Mathf.Max(minSpawnInterval, spawnInterval * Mathf.Pow(intervalMultiplier, Stage));
     public int CurrentMaxAlive => Mathf.Min(maxAliveCap, maxAlive + Stage * maxAliveIncrease);
 
     private void Start()
     {
-        if (enemyPrefab == null || spawnPoints == null || spawnPoints.Length == 0)
+        if (!HasAnySpawnOption() || spawnPoints == null || spawnPoints.Length == 0)
         {
-            Debug.LogError("EnemySpawner needs an Enemy prefab and at least one spawn point.", this);
+            Debug.LogError("EnemySpawner needs at least one enemy prefab (with a weight above 0) and at least one spawn point.", this);
             enabled = false;
             return;
         }
@@ -77,11 +93,11 @@ public class EnemySpawner : MonoBehaviour
             return;
 
         UpdateStage();
-        
+
         // A destroyed enemy counts as "null" in Unity, so this clears out the dead ones
         alive.RemoveAll(enemy => enemy == null);
 
-        if (Time.time < nextSpawnTime || alive.Count >= maxAlive)
+        if (Time.time < nextSpawnTime || alive.Count >= CurrentMaxAlive)
             return;
 
         nextSpawnTime = Time.time + CurrentSpawnInterval; // iterate the spawn time
@@ -90,25 +106,81 @@ public class EnemySpawner : MonoBehaviour
 
     private void TrySpawn()
     {
+        EnemyAi prefab = PickEnemyPrefab();
         Transform point = PickSpawnPoint();
 
-        // Find the closest spot on the NavMesh to this spawn point
-        if (!NavMesh.SamplePosition(point.position, out NavMeshHit hit, navMeshSearchRadius, NavMesh.AllAreas))
+        // Only ground enemies need to stand on the NavMesh
+        bool isGroundEnemy = prefab is GroundEnemyAi;
+        Vector3 spawnPosition;
+
+        if (isGroundEnemy)
         {
-            Debug.LogWarning("Spawn point '" + point.name + "' isn't near the NavMesh. " +
-                             "Move it closer to the floor or raise Nav Mesh Search Radius.", point);
-            return;
+            // Find the closest spot on the NavMesh to this spawn point
+            if (!NavMesh.SamplePosition(point.position, out NavMeshHit hit, navMeshSearchRadius, NavMesh.AllAreas))
+            {
+                Debug.LogWarning("Spawn point '" + point.name + "' isn't near the NavMesh. " +
+                                 "Move it closer to the floor or raise Nav Mesh Search Radius.", point);
+                return;
+            }
+
+            spawnPosition = hit.position;
+        }
+        else
+        {
+            spawnPosition = point.position + Vector3.up * _flyingSpawnHeight;
         }
 
         // Face the player so enemies don't spawn looking at a wall
-        Vector3 toPlayer = player.transform.position - hit.position;
+        Vector3 toPlayer = player.transform.position - spawnPosition;
         toPlayer.y = 0f;
         Quaternion facing = toPlayer.sqrMagnitude > 0.01f ? Quaternion.LookRotation(toPlayer) : Quaternion.identity;
 
-        EnemyAi enemy = Instantiate(enemyPrefab, hit.position, facing, enemyContainer);
-        enemy.player = player;
+        EnemyAi enemy = Instantiate(prefab, spawnPosition, facing, enemyContainer);
+        enemy.Player = player;
         alive.Add(enemy);
     }
+
+    private bool HasAnySpawnOption()
+    {
+        if (_spawnOptions == null)
+            return false;
+
+        foreach (SpawnOption option in _spawnOptions)
+        {
+            if (option != null && option.Prefab != null && option.Weight > 0f)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Weighted random pick: an option with weight 2 is twice as likely as one with weight 1.</summary>
+    private EnemyAi PickEnemyPrefab()
+    {
+        float totalWeight = 0f;
+        foreach (SpawnOption option in _spawnOptions)
+        {
+            if (option != null && option.Prefab != null)
+                totalWeight += option.Weight;
+        }
+
+        float roll = Random.Range(0f, totalWeight);
+        EnemyAi lastValidPrefab = null;
+
+        foreach (SpawnOption option in _spawnOptions)
+        {
+            if (option == null || option.Prefab == null || option.Weight <= 0f)
+                continue;
+
+            lastValidPrefab = option.Prefab;
+            roll -= option.Weight;
+            if (roll <= 0f)
+                return option.Prefab;
+        }
+
+        return lastValidPrefab; // only reached through float rounding
+    }
+
     private void UpdateStage()
     {
         int stage = Mathf.FloorToInt((Time.time - startTime) / Mathf.Max(1f, rampEvery));
