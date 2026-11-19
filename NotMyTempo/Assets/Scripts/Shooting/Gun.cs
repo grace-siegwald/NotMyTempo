@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -37,6 +38,7 @@ public class Gun : MonoBehaviour
 
     private Camera _camera;
     private AudioSource _audio;
+    private WeaponModifier[] _modifiers; // array of modifiers the gun can have
     private LineRenderer laserLine;
     private WaitForSeconds laserWait;
     private float nextFireTime;
@@ -69,6 +71,7 @@ public class Gun : MonoBehaviour
     {
         _camera = GetComponentInParent<Camera>();
         _audio = GetComponent<AudioSource>();
+        _modifiers = GetComponents<WeaponModifier>(); // plural, gets all of them modifiers
         laserLine = GetComponent<LineRenderer>();
         // creates a WaitForSeconds object for the laser duration so we don't have to keep creating new ones every time we shoot
         laserWait = new WaitForSeconds(laserDuration);
@@ -122,6 +125,15 @@ public class Gun : MonoBehaviour
         yield return laserWait;
         laserLine.enabled = false;
     }
+    
+    // Getting Shot Data
+    private ShotData BuildBaseShot (float damageMultiplier)
+    {
+        return null;
+    }
+    private void ApplyModifiers(ShotData shot)
+    {
 
+    }
 }
 
