@@ -1,5 +1,5 @@
 using System.Collections;
-using Unity.VisualScripting;
+using UnityEditor.EditorTools;
 using UnityEngine;
 
 /// <summary>
@@ -31,6 +31,8 @@ public class Gun : MonoBehaviour
     [SerializeField] private LayerMask shootableLayers;
     [Tooltip("How long the laser line stays visible, in seconds")]
     [SerializeField] private float laserDuration = 0.07f;
+    [Tooltip("Spawned once per bullet to draw the shot")]
+    [SerializeField] private BeamTracer beamPrefab;
 
     [Header("Projectile")]
     [SerializeField] private GameObject projectilePrefab;
@@ -39,32 +41,11 @@ public class Gun : MonoBehaviour
     private Camera _camera;
     private AudioSource _audio;
     private WeaponModifier[] _modifiers; // array of modifiers the gun can have
-    private LineRenderer laserLine;
-    private WaitForSeconds laserWait;
     private float nextFireTime;
 
     public enum DeliveryMethod { Hitscan, Projectile }
 
     public bool IsReady { get { return Time.time >= nextFireTime; } }
-
-    // Fires one shot right now with the given damage multiplier (from the archetype). The archetype decides when to call this.
-    public void Fire(float damageMultiplier)
-    {
-        // sets the next time the gun can fire
-        nextFireTime = Time.time + fireCooldown;
-        // calculates the damage of this shot, factoring in the archetype's multiplier
-        float d = damage * damageMultiplier;
-
-        // fires the shot based on delivery method
-        if (deliveryMethod == DeliveryMethod.Projectile)
-        {
-            FireProjectile(d);
-        }
-        else
-        {
-            FireHitscan(d);
-        }
-    }
 
     // gets all the coponents we need references to, and removes the Player layer from the shootable layers so you can't shoot yourself
     private void Awake()
@@ -72,38 +53,35 @@ public class Gun : MonoBehaviour
         _camera = GetComponentInParent<Camera>();
         _audio = GetComponent<AudioSource>();
         _modifiers = GetComponents<WeaponModifier>(); // plural, gets all of them modifiers
-        laserLine = GetComponent<LineRenderer>();
-        // creates a WaitForSeconds object for the laser duration so we don't have to keep creating new ones every time we shoot
-        laserWait = new WaitForSeconds(laserDuration);
         shootableLayers &= ~LayerMask.GetMask("Player");
     }
 
-    private void FireHitscan(float damage)
+    // Fires one shot right now with the given damage multiplier (from the archetype). The archetype decides when to call this.
+    public void Fire(float damageMultiplier)
     {
-        StartCoroutine(PlayShotEffect());
+        // sets the next time the gun can fire
+        nextFireTime = Time.time + fireCooldown;
+        
+        ShotData shot = BuildBaseShot(damageMultiplier); // build the shot
+        ApplyModifiers(shot);
 
-        Vector3 rayOrigin = _camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f)); // the center of the camera's viewport
-        Vector3 rayDirection = _camera.transform.forward; // the direction the camera is facing
-        laserLine.SetPosition(0, muzzle.position); // the bulllet starts at the muzzle
-
-        bool didHit = Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, range, shootableLayers, QueryTriggerInteraction.Ignore);
-        if (!didHit) // if the raycast didn't hit anything, we just draw the laser line to the max range and return
+        // fires the shot based on delivery method
+        if (deliveryMethod == DeliveryMethod.Projectile)
         {
-            laserLine.SetPosition(1, rayOrigin + rayDirection * range);
-            return;
+            FireProjectile(shot.Damage);
         }
-
-        laserLine.SetPosition(1, hit.point); // if we hit something, we draw the laser line to the hit point
-
-        IDamageable target = hit.collider.GetComponentInParent<IDamageable>(); // get the IDamageable component on the hit object
-        if (target != null)
+        else
         {
-            target.TakeDamage(damage); // deals damage to the target if it has an IDamageable component
+            FireHitscan(shot);
         }
+    }
 
-        if (hit.rigidbody != null)
+    private void FireHitscan(ShotData shot)
+    {
+        _audio.Play();
+        foreach (Vector3 direction in shot.Directions)
         {
-            hit.rigidbody.AddForce(-hit.normal * hitForce); // adds force to the hit rigidbody (if it has one)
+            TraceShot(shot, direction);
         }
     }
     private void FireProjectile(float damage)
@@ -116,24 +94,64 @@ public class Gun : MonoBehaviour
 
         projectile.GetComponent<Rigidbody>().AddForce(muzzle.forward * projectileForce); // add force to the projectile's rigidbody to shoot it forward
     }
-
-    // plays the shot effect (sound and laser line) for a short duration
-    private IEnumerator PlayShotEffect()
-    {
-        _audio.Play();
-        laserLine.enabled = true;
-        yield return laserWait;
-        laserLine.enabled = false;
-    }
     
-    // Getting Shot Data
-    private ShotData BuildBaseShot (float damageMultiplier)
+    // Building shot data
+    private ShotData BuildBaseShot(float damageMultiplier)
     {
-        return null;
+        return new ShotData()
+        {
+            Damage = damage * damageMultiplier,
+            Range = range,
+            Origin = _camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f)), // the center of the camera's viewport
+            Directions = {_camera.transform.forward},
+            PierceCount = 0,
+            BeamDuration = laserDuration
+        };
     }
+    // Applying modifiers
     private void ApplyModifiers(ShotData shot)
     {
+        foreach (var modifier in _modifiers)
+        {
+            if (!modifier.isActiveAndEnabled)
+                continue; 
+            modifier.ModifyShot(shot);
+        }
+    }
+    // Render the shot in game, calculate its interactions
+    private void TraceShot(ShotData shot, Vector3 direction)
+    {
+        Vector3 endPoint = shot.Origin + direction * shot.Range; // where the beam ends if it hits nothing
+        bool didHit = Physics.Raycast(shot.Origin, direction, out RaycastHit hit, range, shootableLayers, QueryTriggerInteraction.Ignore);
+        if (didHit)
+        {
+            endPoint = hit.point;
 
+            IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
+            if (target != null)
+            {
+                target.TakeDamage(shot.Damage);
+            }
+
+            if (hit.rigidbody != null)
+            {
+                hit.rigidbody.AddForce(-hit.normal * hitForce);
+            }
+
+            NotifyImpact(shot, hit.point);
+        }
+
+        BeamTracer beam = Instantiate(beamPrefab);
+        beam.Show(muzzle.position, endPoint, shot.BeamDuration);
+    }
+    private void NotifyImpact(ShotData shot, Vector3 point)
+    {
+        foreach (var modifier in _modifiers)
+        {
+            if (!modifier.isActiveAndEnabled)
+                continue; 
+            modifier.OnImpact(shot, point);
+        }
     }
 }
 
