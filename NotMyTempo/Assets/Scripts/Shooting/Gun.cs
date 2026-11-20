@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Knows what a shot does :)
 /// The weapon "type": what a shot does once it's fired (damage, range, hitscan or projectile, effects).
-/// It never reads input and never checks the beat. A FireArchetype on the same object decides
+/// It never reads input. It reads the beat window only for shot heat; a FireArchetype decides
 /// WHEN to call Fire(), so any gun type can use any archetype.
 /// </summary>
 public class Gun : MonoBehaviour
@@ -32,8 +32,16 @@ public class Gun : MonoBehaviour
     [SerializeField] private float laserDuration = 0.07f;
 
     [Header("Projectile")]
+    [Tooltip("Prefab with ProjectileShoot and Rigidbody used for projectile delivery.")]
     [SerializeField] private GameObject projectilePrefab;
+    [Tooltip("Force applied to the projectile along the muzzle forward direction.")]
     [SerializeField] private float projectileForce = 1500f;
+
+    [Header("Overheat")]
+    [Tooltip("Optional heat mechanic on this gun. Leave empty for a gun without overheating.")]
+    [SerializeField] private WeaponOverheat overheat;
+    [Tooltip("Music timing source used only to read the beat window for shot heat. The archetype still judges actions.")]
+    [SerializeField] private Conductor heatConductor;
 
     private Camera _camera;
     private AudioSource _audio;
@@ -43,11 +51,20 @@ public class Gun : MonoBehaviour
 
     public enum DeliveryMethod { Hitscan, Projectile }
 
-    public bool IsReady { get { return Time.time >= nextFireTime; } }
+    public bool IsReady { get { return Time.timeScale > 0f && Time.time >= nextFireTime && (overheat == null || overheat.CanFire); } }
 
     // Fires one shot right now with the given damage multiplier (from the archetype). The archetype decides when to call this.
     public void Fire(float damageMultiplier)
     {
+        // Keep the original Fire(float) API used by the team's FireArchetype scripts.
+        if (!IsReady)
+            return;
+
+        // Read timing without JudgeAction(), which would emit a second judgement.
+        bool onBeat = heatConductor != null && heatConductor.isWithinBuffer;
+        if (overheat != null && !overheat.TryFire(onBeat))
+            return;
+
         // sets the next time the gun can fire
         nextFireTime = Time.time + fireCooldown;
         // calculates the damage of this shot, factoring in the archetype's multiplier
@@ -67,6 +84,11 @@ public class Gun : MonoBehaviour
     // gets all the coponents we need references to, and removes the Player layer from the shootable layers so you can't shoot yourself
     private void Awake()
     {
+        if (overheat == null)
+            overheat = GetComponent<WeaponOverheat>();
+        if (heatConductor == null)
+            heatConductor = FindFirstObjectByType<Conductor>();
+
         _camera = GetComponentInParent<Camera>();
         _audio = GetComponent<AudioSource>();
         laserLine = GetComponent<LineRenderer>();
@@ -124,4 +146,3 @@ public class Gun : MonoBehaviour
     }
 
 }
-
